@@ -28,6 +28,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'https://xurp-j7zmc2qm1-davids-projects-e567e938.vercel.app',
       'https://xurp-ia.onrender.com',
+      'https://xurp-ia.vercel.app',
     ],
     credentials: true,
   });
