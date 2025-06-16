@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useProjects } from '@/app/hooks/useProjects';
 import { useAuth } from '@/app/hooks/useAuth';
 import { getUserPermissions } from '@/app/utils/permissions';
-import AdminDashboard from '@/app/admin/page'; // Asegúrate de que esta ruta sea correcta
+import AdminDashboard from '@/app/admin/components/AdminDashboard';
 import SkillAssessmentCheck from '@/app/components/SkillAssessmentCheck';
 import { FaSpinner } from 'react-icons/fa';
 

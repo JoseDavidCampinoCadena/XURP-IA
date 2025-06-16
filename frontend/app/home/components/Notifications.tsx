@@ -4,16 +4,7 @@ import { useState, useEffect } from 'react';
 import { BsBell } from 'react-icons/bs';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useAuth } from '@/app/hooks/useAuth';
-import { notificationsApi } from '@/app/api/notifications.api';
-
-interface Notification {
-  id: number;
-  message: string;
-  type: string;
-  isRead: boolean;
-  relatedId?: number;
-  createdAt: string;
-}
+import { notificationsApi, Notification } from '@/app/api/notifications.api';
 
 const Notifications = () => {
   const { theme } = useTheme();
@@ -61,7 +52,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      const unreadNotifications = notifications.filter(n => !n.isRead);
+      const unreadNotifications = notifications.filter(n => !n.read);
       await Promise.all(
         unreadNotifications.map(notification => 
           notificationsApi.markAsRead(notification.id)
@@ -108,7 +99,7 @@ const Notifications = () => {
     return null;
   }
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <div className="relative">
@@ -193,7 +184,7 @@ const Notifications = () => {
                     theme === 'dark'
                       ? 'border-zinc-700 hover:bg-zinc-700'
                       : 'border-gray-200 hover:bg-gray-50'
-                  } cursor-pointer transition-colors ${notification.isRead ? 'opacity-60' : ''}`}
+                  } cursor-pointer transition-colors ${notification.read ? 'opacity-60' : ''}`}
                   onClick={() => markAsRead(notification.id)}
                 >
                   <div className="flex items-start gap-3">
@@ -212,7 +203,7 @@ const Notifications = () => {
                         {formatTimestamp(notification.createdAt)}
                       </p>
                     </div>
-                    {!notification.isRead && (
+                    {!notification.read && (
                       <span className={`w-2 h-2 rounded-full mt-1 flex-shrink-0 ${
                         theme === 'dark' ? 'bg-blue-500' : 'bg-blue-600'
                       }`} />

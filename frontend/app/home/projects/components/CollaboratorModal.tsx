@@ -6,27 +6,26 @@ import { usersApi } from '@/app/api/users.api';
 
 interface CollaboratorModalProps {
   projectId: number;
+  projectName?: string;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function CollaboratorModal({ projectId, onClose, onSuccess }: CollaboratorModalProps) {
+export default function CollaboratorModal({ projectId, projectName = 'Proyecto', onClose, onSuccess }: CollaboratorModalProps) {
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('MEMBER');
+  const [role, setRole] = useState<'ADMIN' | 'MEMBER'>('MEMBER');
   const [loading, setLoading] = useState(false);
   const { addCollaborator, error } = useCollaborators(projectId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      // Buscar el usuario por email
+      setLoading(true);      // Buscar el usuario por email
       const user = await usersApi.findByEmail(email);
       // Agregar el usuario como colaborador
-      await addCollaborator(user.id, projectId, role);
+      await addCollaborator(user.name, user.email, role, projectId, projectName);
       onSuccess();
-      onClose();
-    } catch (err: any) {
+      onClose();    } catch (err: unknown) {
       console.error('Error adding collaborator:', err);
     } finally {
       setLoading(false);
@@ -56,10 +55,9 @@ export default function CollaboratorModal({ projectId, onClose, onSuccess }: Col
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Rol
-            </label>
-            <select
+            </label>            <select
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setRole(e.target.value as 'ADMIN' | 'MEMBER')}
               className="mt-1 block w-full p-2 border rounded"
               disabled={loading}
             >

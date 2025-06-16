@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaCrown, FaCheck, FaArrowLeft, FaCreditCard, FaShieldAlt } from "react-icons/fa";
 import { membershipApi } from "@/app/api/membership.api";
@@ -16,7 +16,7 @@ interface PlanDetails {
   description: string;
 }
 
-const PaymentPage = () => {
+function PaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const planType = searchParams.get('plan') as 'PRO' | 'ENTERPRISE';
@@ -326,13 +326,20 @@ const PaymentPage = () => {
               </button>
 
               <p className="text-xs text-gray-400 text-center mt-4">
-                Al completar el pago, aceptas nuestros términos de servicio y política de privacidad.
-              </p>
+                Al completar el pago, aceptas nuestros términos de servicio y política de privacidad.              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+const PaymentPage = () => {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <PaymentContent />
+    </Suspense>
   );
 };
 

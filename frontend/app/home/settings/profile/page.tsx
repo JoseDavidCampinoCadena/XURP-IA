@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MiniSidebar from "../components/MiniSidebar";
 import { useAuth } from '@/app/hooks/useAuth';
@@ -12,7 +12,7 @@ import { MdEmail } from 'react-icons/md';
 import { HiOutlineDocumentArrowDown } from 'react-icons/hi2';
 import countryList from 'react-select-country-list';
 
-const ProfilePage = () => {
+function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setUser } = useAuth();
@@ -621,13 +621,20 @@ const ProfilePage = () => {
                   Guardar Perfil
                 </>
               )}
-            </button>
-              </form>
+            </button>              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+const ProfilePage = () => {
+  return (
+    <Suspense fallback={<div>Cargando perfil...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 };
 

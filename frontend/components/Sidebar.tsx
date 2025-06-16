@@ -11,7 +11,7 @@ interface NavLink {
   type?: 'divider';
 }
 
-export default function Sidebar({ userGroups }: { userGroups: string[] }) {
+export default function Sidebar() {
   const pathname = usePathname();
 
   const links: NavLink[] = [

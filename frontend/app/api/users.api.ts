@@ -12,6 +12,7 @@ export interface User {
   nationality?: string;
   age?: number;
   languages?: string[];
+  projectsCount?: number;
 }
 
 export interface UpdateUserPayload {
@@ -19,6 +20,7 @@ export interface UpdateUserPayload {
   email?: string;
   password?: string;
   description?: string;
+  projectsCount?: number;
 }
 
 export const usersApi = {

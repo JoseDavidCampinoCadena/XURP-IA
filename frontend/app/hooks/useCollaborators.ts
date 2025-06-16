@@ -46,12 +46,12 @@ export const useCollaborators = (projectId?: number) => {
       setLoading(false);
     }
   }, []);
-
   const addCollaborator = async (
     name: string,
     email: string,
     role: 'ADMIN' | 'MEMBER',
-    projectId: number
+    projectId: number,
+    projectName: string
   ) => {
     try {
       setLoading(true);
@@ -60,6 +60,7 @@ export const useCollaborators = (projectId?: number) => {
         email,
         role,
         projectId,
+        projectName,
       });
       setCollaborators(prev => [...prev, newCollaborator as Collaborator]);
       setError(null);

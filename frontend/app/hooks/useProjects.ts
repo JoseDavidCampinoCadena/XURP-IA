@@ -45,11 +45,7 @@ export const useProjects = () => {
 
   const createProject = async (data: { name: string; description?: string; logo: string; location?: string; lastConnection?: string }) => {
     if (!user) throw new Error('Usuario no autenticado');
-    try {
-      const newProject = await projectsApi.create({
-        ...data,
-        ownerId: user.id,
-      });
+    try {      const newProject = await projectsApi.create(data);
       setProjects(prev => [...prev, newProject]);
       // Lógica para aumentar el conteo de proyectos del usuario al crear uno
       // Si tienes un campo projectsCount en el usuario, aquí podrías actualizarlo

@@ -153,12 +153,11 @@ export default function CollaboratorsPage() {
           role: 'MEMBER',
           projectId: currentProjectId,
           projectName: currentProject.name, // <-- necesario para el backend
-        });
-        // Si el usuario no estaba ya en el proyecto, aumentar el campo projects para ese usuario
+        });        // Si el usuario no estaba ya en el proyecto, aumentar el campo projects para ese usuario
         if (!currentProject.collaborators?.some(c => c.user.id === user.id)) {
           // Lógica para actualizar el campo projects del usuario agregado
           // Suponiendo que tienes un endpoint para actualizar el usuario:
-          await usersApi.updateUserProfile(user.id, { projects: (user.projects || 0) + 1 });
+          await usersApi.updateUser(user.id, { projectsCount: (user.projectsCount || 0) + 1 });
         }
         await refreshCollaborators(currentProjectId);
         alert('Colaborador agregado exitosamente.');

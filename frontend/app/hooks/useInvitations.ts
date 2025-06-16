@@ -19,21 +19,18 @@ export const useInvitations = () => {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const sendInvitation = async (email: string, projectId: number, role: 'ADMIN' | 'MEMBER') => {
+  const sendInvitation = async (email: string, projectId: number, role: 'ADMIN' | 'MEMBER', projectName: string = 'Proyecto') => {
     try {
-      setLoading(true);
-      await collaboratorsApi.addCollaborator({
+      setLoading(true);      await collaboratorsApi.addCollaborator({
         email,
         name: '', // El nombre se establecerá cuando el usuario acepte la invitación
         role,
-        projectId
+        projectId,
+        projectName
       });
       setError(null);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Error al enviar la invitación';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch {
+      setError('Error al enviar la invitación');
     } finally {
       setLoading(false);
     }
@@ -51,10 +48,8 @@ export const useInvitations = () => {
         )
       );
       setError(null);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Error al aceptar la invitación';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch {
+      setError('Error al aceptar la invitación');
     } finally {
       setLoading(false);
     }
@@ -72,10 +67,8 @@ export const useInvitations = () => {
         )
       );
       setError(null);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Error al rechazar la invitación';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch {
+      setError('Error al rechazar la invitación');
     } finally {
       setLoading(false);
     }
