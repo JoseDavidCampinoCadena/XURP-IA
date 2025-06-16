@@ -5,7 +5,7 @@ import { useProjects } from '@/app/hooks/useProjects';
 import { useRouter } from 'next/navigation';
 import { membershipApi, MembershipInfo } from '@/app/api/membership.api';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import { FaRocket, FaLightbulb, FaClock, FaUsers, FaCrown, FaSpinner, FaCheckCircle, FaExclamationTriangle, FaSun, FaMoon } from 'react-icons/fa';
+import { FaRocket, FaLightbulb, FaClock, FaUsers, FaCrown, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi2';
 
 interface Project {
@@ -34,7 +34,7 @@ interface AIAnalysis {
 
 export default function ProjectsPage() {
   const { projects, loading, error, createProject } = useProjects();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [membership, setMembership] = useState<MembershipInfo | null>(null);
   const [loadingMembership, setLoadingMembership] = useState(true);
   
@@ -224,23 +224,11 @@ export default function ProjectsPage() {
         </div>
       </div>
     );
-  }
-  return (
+  }  return (
     <div className={`flex min-h-screen ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
       {/* Header */}
       <div className="flex-1 p-6 overflow-auto">
         <div className="max-w-4xl mx-auto">
-          {/* Theme toggle button */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={toggleTheme}
-              className={`p-3 rounded-xl transition-colors ${theme === 'dark' ? 'bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900'}`}
-              title={`Cambiar a tema ${theme === 'dark' ? 'claro' : 'oscuro'}`}
-            >
-              {theme === 'dark' ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
-            </button>
-          </div>
-          
           {/* Header mejorado */}
           <div className="text-center mb-8 mt-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-[#26D07C] via-[#20B369] to-[#1AA05E] bg-clip-text text-transparent flex items-center justify-center gap-3">
