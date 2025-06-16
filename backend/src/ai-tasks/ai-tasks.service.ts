@@ -768,11 +768,10 @@ export class AiTasksService {
       
       // For today, ensure max 1 task per user
       const maxTasksPerUser = dayNumber === currentDay ? 1 : 2; // Today: 1 task, future days: up to 2 tasks
-      
-      for (const task of dayTasks) {
+        for (const task of dayTasks as any[]) {
         // Find best assignee based on skill level, evaluations, and daily assignment limits
         const assignee = this.findBestAssigneeWithLimits(
-          allProjectUsers, 
+          allProjectUsers,
           task.skillLevel, 
           dayNumber === currentDay ? todayAssignmentCount : new Map(),
           maxTasksPerUser

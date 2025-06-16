@@ -139,11 +139,10 @@ export class MembershipService {
 
     // Count evaluations by project and technology
     const usage: EvaluationUsage[] = [];
-    
-    for (const project of allProjects) {
+      for (const project of allProjects) {
       // Get unique technologies evaluated in this project
       const projectEvaluations = user.evaluations.filter(e => e.projectId === project.id);
-      const technologies = [...new Set(projectEvaluations.map(e => e.technology))];
+      const technologies = [...new Set(projectEvaluations.map(e => e.technology))] as string[];
 
       for (const technology of technologies) {
         const count = projectEvaluations.filter(e => e.technology === technology).length;

@@ -13,7 +13,7 @@ async function bootstrap() {
   
   // Enable CORS with specific origin
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://xurp-j7zmc2qm1-davids-projects-e567e938.vercel.app'],
     credentials: true,
   });
   console.log('✅ CORS enabled for frontend at http://localhost:3000');
