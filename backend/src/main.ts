@@ -2,35 +2,45 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 import { join } from 'path';
 import * as express from 'express';
+import { exec } from 'child_process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
   });
-  
-  // Enable CORS with specific origin
+
+  // 🔁 Migraciones automáticas en producción
+  if (process.env.NODE_ENV === 'production') {
+    exec('npx prisma migrate deploy', (err, stdout, stderr) => {
+      if (err) {
+        console.error('❌ Error ejecutando migración:', stderr);
+      } else {
+        console.log('✅ Migraciones aplicadas:\n', stdout);
+      }
+    });
+  }
+
+  // Habilitar CORS
   app.enableCors({
     origin: [
-      'http://localhost:3000', 
+      'http://localhost:3000',
       'https://xurp-j7zmc2qm1-davids-projects-e567e938.vercel.app',
-      'https://xurp-ia.onrender.com'
+      'https://xurp-ia.onrender.com',
     ],
     credentials: true,
   });
   console.log('✅ CORS enabled for frontend at http://localhost:3000');
 
-  // Enable validation pipes
+  // Validaciones globales
   app.useGlobalPipes(new ValidationPipe());
   console.log('✅ Validation pipe enabled');
 
-  // Initialize Prisma
+  // Conexión a la base de datos
   const prismaService = app.get(PrismaService);
   await prismaService.$connect();
 
-  // Configure minimal logging
   if (process.env.LOG_LEVEL === 'query') {
     prismaService.$use(async (params, next) => {
       const before = Date.now();
@@ -43,7 +53,7 @@ async function bootstrap() {
 
   console.log('✅ Database connection established');
 
-  // Servir archivos estáticos de /uploads
+  // Servir archivos de /uploads
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   const port = process.env.PORT || 3001;
@@ -55,6 +65,7 @@ async function bootstrap() {
 🔐 Authentication endpoints:
    POST http://localhost:${port}/auth/register
    POST http://localhost:${port}/login
-  `);
+`);
 }
+
 bootstrap();
