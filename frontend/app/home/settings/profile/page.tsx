@@ -3,6 +3,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MiniSidebar from "../components/MiniSidebar";
 import { useAuth } from '@/app/hooks/useAuth';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import { usersApi } from '@/app/api/users.api';
 import { membershipApi, MembershipInfo } from '@/app/api/membership.api';
 import { setCookie } from '@/app/utils/cookies';
@@ -16,6 +17,7 @@ function ProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, setUser } = useAuth();
+  const { theme } = useTheme();
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [description, setDescription] = useState("");
@@ -29,7 +31,7 @@ function ProfileContent() {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [cvFileName, setCvFileName] = useState<string>("");
   const [nationality, setNationality] = useState(user?.nationality || "");
-  const [languages, setLanguages] = useState<string[]>(user?.languages || []);  const [membership, setMembership] = useState<MembershipInfo | null>(null);
+  const [languages, setLanguages] = useState<string[]>(user?.languages || []);const [membership, setMembership] = useState<MembershipInfo | null>(null);
   const [loadingMembership, setLoadingMembership] = useState(false);
   const [membershipError, setMembershipError] = useState("");
   const [upgrading, setUpgrading] = useState(false);
@@ -131,7 +133,7 @@ function ProfileContent() {
       setTimeout(() => setSuccess(false), 2000);
     }
   };  return (
-    <div className="flex min-h-screen   text-white">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
       {/* Mini Sidebar */}
       <MiniSidebar />
 
@@ -142,12 +144,12 @@ function ProfileContent() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-[#26D07C] via-[#20B369] to-[#1AA05E] bg-clip-text text-transparent">
             ✨ Mi Perfil
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
             Personaliza tu experiencia y gestiona tu membresía para desbloquear todo el potencial
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-[#26D07C] to-[#20B369] mx-auto mt-4 rounded-full"></div>
         </div>        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-black via-green-900/80 to-green-400/20 backdrop-blur-sm border border-green-400/30 backdrop-blur-sm border border-gray-700/50 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+          <div className={`backdrop-blur-sm border p-8 rounded-3xl shadow-2xl relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-black via-green-900/80 to-green-400/20 border-green-400/30' : 'bg-gradient-to-br from-white via-green-50 to-green-100 border-green-300'}`}>
             {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 w-32 h-32 bg-[#26D07C] rounded-full blur-3xl opacity-10"></div>
             <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-500 rounded-full blur-2xl opacity-10"></div>
@@ -196,17 +198,16 @@ function ProfileContent() {
                   accept="image/*"
                   onChange={handleProfileImageChange}
                   className="hidden"
-                />
-              </div>
+                />              </div>
               <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-1">Foto de Perfil</h3>
-                <p className="text-sm text-gray-400">Haz clic en la imagen para cambiar tu foto</p>
+                <h3 className={`text-xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Foto de Perfil</h3>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Haz clic en la imagen para cambiar tu foto</p>
               </div>
-            </div>{/* Información personal - Grid Layout */}
+            </div>            {/* Información personal - Grid Layout */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               {/* Nombre */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2" htmlFor="name">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} htmlFor="name">
                   👤 Nombre Completo
                 </label>
                 <input
@@ -214,7 +215,7 @@ function ProfileContent() {
                   type="text"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white placeholder-green-200/50 transition-all duration-300"
+                  className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white placeholder-green-200/50' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900 placeholder-gray-500'}`}
                   placeholder="Ingresa tu nombre completo"
                   required
                 />
@@ -222,7 +223,7 @@ function ProfileContent() {
 
               {/* Email */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2" htmlFor="email">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} htmlFor="email">
                   📧 Correo Electrónico
                 </label>
                 <div className="relative">
@@ -234,7 +235,7 @@ function ProfileContent() {
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full rounded-xl pl-12 pr-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white placeholder-green-200/50 transition-all duration-300"
+                    className={`w-full rounded-xl pl-12 pr-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white placeholder-green-200/50' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900 placeholder-gray-500'}`}
                     placeholder="tu@email.com"
                     required
                   />
@@ -242,26 +243,26 @@ function ProfileContent() {
               </div>
             </div>            {/* Descripción profesional */}
             <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-300 mb-2" htmlFor="description">
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} htmlFor="description">
                 📝 Descripción Profesional
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white placeholder-green-200/50 transition-all duration-300 resize-none"
+                className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 resize-none ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white placeholder-green-200/50' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900 placeholder-gray-500'}`}
                 placeholder="Cuéntanos sobre ti, tu experiencia y habilidades profesionales..."
                 rows={4}
               />
-              <p className="text-xs text-gray-500 mt-1">💡 Comparte tu experiencia y habilidades para destacar en la comunidad</p>
-            </div>            {/* Información adicional - Grid */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Profesión/Área */}
+              <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-600'}`}>💡 Comparte tu experiencia y habilidades para destacar en la comunidad</p>
+            </div>{/* Información adicional - Grid */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">              {/* Profesión/Área */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   💼 Profesión/Área
-                </label>                <select
-                  className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white transition-all duration-300"
+                </label>
+                <select
+                  className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900'}`}
                   value={profession}
                   onChange={e => setProfession(e.target.value)}
                   required
@@ -281,14 +282,13 @@ function ProfileContent() {
                   <option value="Producto">Product Manager</option>
                   <option value="Otro">Otro</option>
                 </select>
-              </div>
-
-              {/* Género */}
+              </div>              {/* Género */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   🧑‍🤝‍🧑 Género
-                </label>                <select
-                  className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white transition-all duration-300"
+                </label>
+                <select
+                  className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900'}`}
                   value={gender}
                   onChange={e => setGender(e.target.value)}
                 >
@@ -299,15 +299,13 @@ function ProfileContent() {
                   <option value="Prefiero no decir">Prefiero no decir</option>
                 </select>
               </div>
-            </div>
-
-            {/* CV Upload mejorado */}
+            </div>            {/* CV Upload mejorado */}
             <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+              <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                 📄 Hoja de Vida (CV)
               </label>
               <div className="relative">
-                <div className="flex flex-col md:flex-row items-center gap-4 bg-black/30 rounded-xl border-2 border-dashed border-green-400/30 hover:border-green-400 transition-all duration-300 p-6">
+                <div className={`flex flex-col md:flex-row items-center gap-4 rounded-xl border-2 border-dashed hover:border-green-400 transition-all duration-300 p-6 ${theme === 'dark' ? 'bg-black/30 border-green-400/30' : 'bg-white/70 border-green-300'}`}>
                   <div className="flex items-center gap-3 flex-1">
                     <HiOutlineDocumentArrowDown className="text-[#26D07C] w-8 h-8" />
                     <div className="flex-1">
@@ -315,7 +313,7 @@ function ProfileContent() {
                         type="file" 
                         accept=".pdf,.doc,.docx" 
                         onChange={handleCvChange} 
-                        className="w-full text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-[#26D07C] file:text-white hover:file:bg-[#20B369] file:cursor-pointer"
+                        className={`w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-[#26D07C] file:text-white hover:file:bg-[#20B369] file:cursor-pointer ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
                       />
                       {cvFileName && (
                         <p className="text-sm text-[#26D07C] mt-1 font-medium">📎 {cvFileName}</p>
@@ -338,13 +336,13 @@ function ProfileContent() {
             </div>
 
             {/* Información internacional - Grid */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Nacionalidad */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">              {/* Nacionalidad */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   🌍 Nacionalidad
-                </label>                <select
-                  className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white transition-all duration-300"
+                </label>
+                <select
+                  className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900'}`}
                   value={nationality}
                   onChange={e => setNationality(e.target.value)}
                   required
@@ -354,15 +352,14 @@ function ProfileContent() {
                     <option key={c.value} value={c.label}>{c.label}</option>
                   ))}
                 </select>
-              </div>
-
-              {/* Idiomas */}
+              </div>              {/* Idiomas */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   🗣️ Idiomas
-                </label>                <select
+                </label>
+                <select
                   multiple
-                  className="w-full rounded-xl px-4 py-3 bg-black/30 border border-green-400/30 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 outline-none text-white transition-all duration-300 min-h-[120px]"
+                  className={`w-full rounded-xl px-4 py-3 border focus:ring-2 focus:ring-green-400/20 outline-none transition-all duration-300 min-h-[120px] ${theme === 'dark' ? 'bg-black/30 border-green-400/30 focus:border-green-400 text-white' : 'bg-white/70 border-green-300 focus:border-green-500 text-gray-900'}`}
                   value={languages}
                   onChange={e => {
                     const selected = Array.from(e.target.selectedOptions, option => option.value);
@@ -374,29 +371,28 @@ function ProfileContent() {
                     <option key={lang} value={lang} className="py-2">{lang}</option>
                   ))}
                 </select>
-                <p className="text-xs text-gray-500">💡 Mantén presionado Ctrl/Cmd y haz clic para seleccionar múltiples idiomas</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-600'}`}>💡 Mantén presionado Ctrl/Cmd y haz clic para seleccionar múltiples idiomas</p>
               </div>
-            </div>{/* Membresía */}
-            <div className="border-t border-gray-600 pt-8">
+            </div>            {/* Membresía */}
+            <div className={`border-t pt-8 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`}>
               <div className="text-center mb-8">
                 <h3 className="text-3xl font-bold mb-3 bg-gradient-to-r from-[#26D07C] to-[#20B369] bg-clip-text text-transparent flex items-center justify-center gap-3">
                   <FaCrown className="text-yellow-400 text-2xl" />
                   Tu Plan de Membresía
                 </h3>
-                <p className="text-gray-400 text-sm">Gestiona tu suscripción y descubre nuevas funcionalidades</p>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Gestiona tu suscripción y descubre nuevas funcionalidades</p>
               </div>
               
               {loadingMembership ? (
-                <div className="flex flex-col items-center justify-center py-16 bg-gradient-to-br from-black via-green-900/80 to-green-400/20 backdrop-blur-sm border border-green-400/30">
+                <div className={`flex flex-col items-center justify-center py-16 backdrop-blur-sm border rounded-2xl ${theme === 'dark' ? 'bg-gradient-to-br from-black via-green-900/80 to-green-400/20 border-green-400/30' : 'bg-gradient-to-br from-white via-green-50 to-green-100 border-green-300'}`}>
                   <FaSpinner className="animate-spin text-[#26D07C] w-12 h-12 mb-4" />
-                  <span className="text-lg text-gray-300">Cargando información de membresía...</span>
-                  <div className="w-32 h-1  rounded-full mt-4 overflow-hidden">
+                  <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Cargando información de membresía...</span>
+                  <div className="w-32 h-1 rounded-full mt-4 overflow-hidden">
                     <div className="w-full h-full bg-gradient-to-r from-[#26D07C] to-[#20B369] animate-pulse"></div>
                   </div>
                 </div>
-              ) : membership ? (                <div className="space-y-8">
-                  {/* Current membership display */}
-                  <div className="relative bg-gradient-to-br from-black to-black backdrop-blur-sm border-2 border-green-700 rounded-2xl p-8 shadow-2xl overflow-hidden">
+              ) : membership ? (                <div className="space-y-8">                  {/* Current membership display */}
+                  <div className={`relative backdrop-blur-sm border-2 rounded-2xl p-8 shadow-2xl overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-black to-black border-green-700' : 'bg-gradient-to-br from-white to-gray-50 border-green-400'}`}>
                     {/* Decorative background pattern */}
                     <div className="absolute inset-0 opacity-5">
                       <div className="absolute -top-4 -right-4 w-32 h-32 bg-[#26D07C] rounded-full blur-3xl"></div>
@@ -421,7 +417,7 @@ function ProfileContent() {
                             )}
                           </div>
                           <div>
-                            <h4 className="font-bold text-3xl text-white mb-1">
+                            <h4 className={`font-bold text-3xl mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                               Plan {membership.type}
                             </h4>
                             <p className="text-xl font-bold bg-gradient-to-r from-[#26D07C] to-[#20B369] bg-clip-text text-transparent">
@@ -435,9 +431,9 @@ function ProfileContent() {
                         </div>
                         
                         {membership.expiresAt && (
-                          <div className="bg-gradient-to-br from-black via-green-900/80 to-green-400/20 backdrop-blur-sm border border-green-400/30 p-4 rounded-xl">
-                            <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Válido hasta:</p>
-                            <p className="text-lg font-bold text-white">
+                          <div className={`backdrop-blur-sm border p-4 rounded-xl ${theme === 'dark' ? 'bg-gradient-to-br from-black via-green-900/80 to-green-400/20 border-green-400/30' : 'bg-gradient-to-br from-white via-green-50 to-green-100 border-green-300'}`}>
+                            <p className={`text-xs uppercase tracking-wider font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Válido hasta:</p>
+                            <p className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                               {new Date(membership.expiresAt).toLocaleDateString('es-ES', {
                                 day: '2-digit',
                                 month: 'long',
@@ -447,31 +443,30 @@ function ProfileContent() {
                           </div>
                         )}
                       </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-8">
+                        <div className="grid md:grid-cols-2 gap-8">
                         <div className="space-y-4">
-                          <h5 className="text-lg font-bold text-white mb-4">📊 Límites de uso</h5>
-                          <div className="bg-gradient-to-br from-black to-green-400/20 backdrop-blur-sm border border-green-400/30 p-4 rounded-xl ">
+                          <h5 className={`text-lg font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>📊 Límites de uso</h5>
+                          <div className={`backdrop-blur-sm border p-4 rounded-xl ${theme === 'dark' ? 'bg-gradient-to-br from-black to-green-400/20 border-green-400/30' : 'bg-gradient-to-br from-white to-green-50 border-green-300'}`}>
                             <div className="flex items-center gap-3 mb-2">
                               <div className="w-3 h-3 bg-[#26D07C] rounded-full shadow-lg shadow-[#26D07C]/50"></div>
-                              <span className="text-white font-semibold">
+                              <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                                 Evaluaciones por proyecto: 
                                 <span className="text-[#26D07C] ml-2">
                                   {membership.evaluationLimits.perProject === -1 ? '∞ Ilimitadas' : membership.evaluationLimits.perProject}
                                 </span>
                               </span>
                             </div>
-                            <p className="text-sm text-gray-400 pl-6">{membership.evaluationLimits.description}</p>
+                            <p className={`text-sm pl-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{membership.evaluationLimits.description}</p>
                           </div>
                         </div>
                         
                         <div>
-                          <h5 className="text-lg font-bold text-white mb-4">🚀 Características premium</h5>
+                          <h5 className={`text-lg font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>🚀 Características premium</h5>
                           <div className="space-y-3 max-h-40 overflow-y-auto custom-scrollbar">
                             {membership.features.map((feature, index) => (
-                              <div key={index} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-800/30 transition-colors">
+                              <div key={index} className={`flex items-start gap-3 p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/30' : 'hover:bg-gray-100'}`}>
                                 <FaCheck className="text-green-400 w-4 h-4 mt-1 flex-shrink-0" />
-                                <span className="text-sm text-gray-200 leading-relaxed">{feature}</span>
+                                <span className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>{feature}</span>
                               </div>
                             ))}
                           </div>
@@ -541,45 +536,41 @@ function ProfileContent() {
                           >
                             {upgrading ? 'Procesando...' : 'Actualizar a ENTERPRISE'}
                           </button>
-                        </div>
-                        <div className="bg-gray-700 rounded-xl p-6 text-white">
+                        </div>                        <div className={`rounded-xl p-6 relative overflow-hidden ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'}`}>
                           <h5 className="font-bold text-lg mb-2">¿No necesitas PRO?</h5>
-                          <p className="text-sm text-gray-300 mb-4">Degradar a plan gratuito</p>
+                          <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Degradar a plan gratuito</p>
                           <button
                             onClick={handleDowngradeMembership}
                             disabled={upgrading}
-                            className="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-lg font-medium transition disabled:opacity-50"
+                            className={`w-full py-3 rounded-lg font-medium transition disabled:opacity-50 ${theme === 'dark' ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-400 hover:bg-gray-500 text-white'}`}
                           >
                             {upgrading ? 'Procesando...' : 'Degradar a FREE'}
                           </button>
                         </div>
                       </>
                     )}
-                    
-                    {membership.type === 'ENTERPRISE' && (
-                      <div className="bg-gray-700 rounded-xl p-6 text-white col-span-full max-w-md mx-auto">
+                      {membership.type === 'ENTERPRISE' && (
+                      <div className={`rounded-xl p-6 col-span-full max-w-md mx-auto ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'}`}>
                         <h5 className="font-bold text-lg mb-2 text-center">¿No necesitas ENTERPRISE?</h5>
-                        <p className="text-sm text-gray-300 mb-4 text-center">Degradar a plan gratuito</p>
+                        <p className={`text-sm mb-4 text-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Degradar a plan gratuito</p>
                         <button
                           onClick={handleDowngradeMembership}
                           disabled={upgrading}
-                          className="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 rounded-lg font-medium transition disabled:opacity-50"
+                          className={`w-full py-3 rounded-lg font-medium transition disabled:opacity-50 ${theme === 'dark' ? 'bg-gray-600 hover:bg-gray-500 text-white' : 'bg-gray-400 hover:bg-gray-500 text-white'}`}
                         >
                           {upgrading ? 'Procesando...' : 'Degradar a FREE'}
                         </button>
                       </div>
                     )}
                   </div>
-                  
-                  {membershipError && (
-                    <div className="text-red-400 text-sm text-center bg-red-900/20 p-4 rounded-lg border border-red-700">
+                    {membershipError && (
+                    <div className={`text-sm text-center p-4 rounded-lg border ${theme === 'dark' ? 'text-red-400 bg-red-900/20 border-red-700' : 'text-red-600 bg-red-100 border-red-300'}`}>
                       <strong>Error:</strong> {membershipError}
                     </div>
                   )}
-                </div>
-              ) : (
-                <div className="text-center py-12 bg-gray-800/50 rounded-xl">
-                  <p className="text-gray-400 mb-6 text-lg">No se pudo cargar la información de membresía</p>
+                </div>              ) : (
+                <div className={`text-center py-12 rounded-xl ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
+                  <p className={`mb-6 text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>No se pudo cargar la información de membresía</p>
                   <button
                     onClick={loadMembershipInfo}
                     className="bg-[#26D07C] hover:bg-[#1bb86c] text-white px-6 py-3 rounded-lg font-bold transition"
@@ -590,13 +581,13 @@ function ProfileContent() {
               )}
             </div>            {/* Feedback Messages */}
             {success && (
-              <div className="bg-green-900/20 border border-green-700 text-green-400 text-center font-bold p-4 rounded-xl flex items-center justify-center gap-2">
+              <div className={`text-center font-bold p-4 rounded-xl flex items-center justify-center gap-2 ${theme === 'dark' ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 border border-green-300 text-green-600'}`}>
                 <FaCheck className="w-5 h-5" />
                 ¡Perfil actualizado exitosamente!
               </div>
             )}
             {error && (
-              <div className="bg-red-900/20 border border-red-700 text-red-400 text-center font-bold p-4 rounded-xl flex items-center justify-center gap-2">
+              <div className={`text-center font-bold p-4 rounded-xl flex items-center justify-center gap-2 ${theme === 'dark' ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 border border-red-300 text-red-600'}`}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -632,7 +623,7 @@ function ProfileContent() {
 
 const ProfilePage = () => {
   return (
-    <Suspense fallback={<div>Cargando perfil...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-lg">Cargando perfil...</div></div>}>
       <ProfileContent />
     </Suspense>
   );

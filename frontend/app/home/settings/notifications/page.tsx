@@ -1,12 +1,15 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useTheme } from "@/app/contexts/ThemeContext";
 import MiniSidebar from "../components/MiniSidebar";
 
 
 const NotificationsPage = () => {
+  const { theme } = useTheme();
+  
   return (
-    <div className="flex  min-h-screen text-white">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
       {/* Mini Sidebar */}
       <MiniSidebar />
 
@@ -19,16 +22,16 @@ const NotificationsPage = () => {
          
 
           {/* Opciones */}
-          <div className="border-green-300 border-2 p-4 rounded-lg mt-4">
+          <div className={`border-2 p-4 rounded-lg mt-4 ${theme === 'dark' ? 'border-green-300' : 'border-green-400 bg-green-50/50'}`}>
             <Link href="/home/settings/notifications/push">
-              <div className="flex justify-between items-center p-3 cursor-pointer rounded-lg">
+              <div className={`flex justify-between items-center p-3 cursor-pointer rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-green-100'}`}>
                 <span>Notificaciones Push</span>
                 <span>➜</span>
               </div>
             </Link>
 
             <Link href="/home/settings/notifications/email">
-              <div className="flex justify-between items-center p-3 cursor-pointer rounded-lg">
+              <div className={`flex justify-between items-center p-3 cursor-pointer rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-green-100'}`}>
                 <span>Notificaciones del Email</span>
                 <span>➜</span>
               </div>

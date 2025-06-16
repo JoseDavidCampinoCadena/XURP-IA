@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import MiniSidebar from "../../components/MiniSidebar";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/app/contexts/ThemeContext";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { Switch } from "@headlessui/react";
 
 const PushNotifications = () => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   // Estado para los switches
   const [notifications, setNotifications] = useState({
@@ -36,16 +38,15 @@ const PushNotifications = () => {
       [key]: !prev[key],
     }));
   };
-
   return (
-    <div className="flex min-h-screen text-white">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
       <MiniSidebar />
 
       <div className="flex-1 p-6">
         <div className="flex items-center mb-4">
           <button
             onClick={() => router.push("/home/settings/notifications")}
-            className="mr-3 mt-9"
+            className={`mr-3 mt-9 transition-colors ${theme === 'dark' ? 'text-white hover:text-[#26D07C]' : 'text-gray-900 hover:text-[#26D07C]'}`}
           >
             <IoChevronBackOutline size={25} /> {/* Icono más grande */}
           </button>
@@ -64,7 +65,7 @@ const PushNotifications = () => {
           ].map(({ key, label }) => (
             <div
               key={key}
-              className="flex justify-between items-center p-3 border-b border-gray-600"
+              className={`flex justify-between items-center p-3 border-b transition-colors ${theme === 'dark' ? 'border-gray-600 hover:bg-gray-800/50' : 'border-gray-200 hover:bg-gray-50'}`}
             >
               <span>{label}</span>
               <Switch
@@ -73,7 +74,7 @@ const PushNotifications = () => {
                 className={`${
                   notifications[key as keyof typeof notifications]
                     ? "bg-[#26D07C]"
-                    : "bg-gray-500"
+                    : theme === 'dark' ? "bg-gray-500" : "bg-gray-300"
                 } relative inline-flex h-6 w-11 items-center rounded-full transition`}
               >
                 <span

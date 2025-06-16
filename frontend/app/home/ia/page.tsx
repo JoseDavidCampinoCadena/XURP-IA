@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { aiConversationApi, AIConversation } from "@/app/api/ai-conversation.api";
 import { useAuth } from "@/app/hooks/useAuth";
+import { useTheme } from "@/app/contexts/ThemeContext";
 import { 
   FaRobot, 
   FaUser, 
@@ -15,12 +16,15 @@ import {
   FaBars,
   FaTimes,
   FaComments,
-  FaBrain
+  FaBrain,
+  FaSun,
+  FaMoon
 } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 
 export default function AIConversationPage() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [conversations, setConversations] = useState<AIConversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<AIConversation | null>(null);
   const [input, setInput] = useState("");
@@ -28,7 +32,7 @@ export default function AIConversationPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wantsNewConversation, setWantsNewConversation] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);  const loadConversations = useCallback(async () => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);const loadConversations = useCallback(async () => {
     try {
       setLoadingConversations(true);
       const data = await aiConversationApi.getAllConversations();
@@ -173,30 +177,37 @@ export default function AIConversationPage() {
       year: 'numeric'
     });
   };
-
   return (
-    <div className="flex h-screen bg-[#212121] text-white">
+    <div className={`flex h-screen ${theme === 'dark' ? 'bg-[#212121] text-white' : 'bg-gray-50 text-gray-900'}`}>
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-80 bg-[#181818] border-r border-gray-700 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
-        <div className="flex flex-col h-full">
-          {/* Sidebar Header */}          
-          <div className="flex items-center justify-between p-6 border-b border-gray-700">
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-80 ${theme === 'dark' ? 'bg-[#181818] border-gray-700' : 'bg-white border-gray-200'} border-r transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <div className="flex flex-col h-full">          {/* Sidebar Header */}          
+          <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-r from-green-400 to-green-500 p-2 rounded-xl">
                 <FaBrain className="w-6 h-6 text-black" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Xurp IA</h1>
-                <p className="text-sm text-gray-400">Asistente Inteligente</p>
+                <h1 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Xurp IA</h1>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Asistente Inteligente</p>
               </div>
             </div>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-400 hover:text-white"
-            >
-              <FaTimes className="w-5 h-5" />
-            </button>
-          </div>          {/* New Conversation Button */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
+                title={`Cambiar a tema ${theme === 'dark' ? 'claro' : 'oscuro'}`}
+              >
+                {theme === 'dark' ? <FaSun className="w-4 h-4" /> : <FaMoon className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className={`lg:hidden ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+          </div>{/* New Conversation Button */}
           <div className="p-4">            <button
               onClick={startNewConversation}
               className="w-full bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-black px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
@@ -210,13 +221,13 @@ export default function AIConversationPage() {
           <div className="flex-1 overflow-y-auto px-4">            {loadingConversations ? (
               <div className="flex items-center justify-center py-8">
                 <FaSpinner className="animate-spin text-green-400 w-6 h-6" />
-                <span className="text-gray-400 ml-3">Cargando...</span>
+                <span className={`ml-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Cargando...</span>
               </div>
             ) : conversations.length === 0 ? (
               <div className="text-center py-8">
-                <FaComments className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 text-sm">No hay conversaciones</p>
-                <p className="text-gray-500 text-xs mt-1">Inicia una nueva conversación</p>
+                <FaComments className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>No hay conversaciones</p>
+                <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>Inicia una nueva conversación</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -226,21 +237,20 @@ export default function AIConversationPage() {
                       setActiveConversation(conversation);
                       setWantsNewConversation(false); // Reset when selecting existing conversation
                       setSidebarOpen(false);
-                    }}className={`group p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                    }}                    className={`group p-3 rounded-lg cursor-pointer transition-all duration-200 ${
                       activeConversation?.id === conversation.id
                         ? 'bg-green-500/20 border border-green-400/50'
-                        : 'hover:bg-gray-700/50'
+                        : theme === 'dark' ? 'hover:bg-gray-700/50' : 'hover:bg-gray-100'
                     }`}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-white text-sm font-medium truncate">
+                    <div className="flex items-start justify-between">                      <div className="flex-1 min-w-0">
+                        <h3 className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {conversation.title}
                         </h3>
-                        <p className="text-gray-400 text-xs mt-1 truncate">
+                        <p className={`text-xs mt-1 truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                           {conversation.lastMessage}
                         </p>
-                        <p className="text-gray-500 text-xs mt-1">
+                        <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                           {formatDate(conversation.createdAt)}
                         </p>
                       </div>
@@ -249,7 +259,7 @@ export default function AIConversationPage() {
                           e.stopPropagation();
                           deleteConversation(conversation.id);
                         }}
-                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-400 transition-all duration-200 p-1"
+                        className={`opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 ${theme === 'dark' ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-500'}`}
                       >
                         <FaTrash className="w-3 h-3" />
                       </button>
@@ -258,17 +268,15 @@ export default function AIConversationPage() {
                 ))}
               </div>
             )}
-          </div>
-
-          {/* User Info */}
-          <div className="p-4 border-t border-gray-700">
+          </div>          {/* User Info */}
+          <div className={`p-4 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-r from-green-600 to-teal-600 p-2 rounded-full">
                 <FaUser className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-white text-sm font-medium">{user?.name}</p>
-                <p className="text-gray-400 text-xs">{user?.email}</p>
+                <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{user?.name}</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{user?.email}</p>
               </div>
             </div>
           </div>
@@ -276,18 +284,16 @@ export default function AIConversationPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col lg:ml-0">
-        {/* Header */}
-        <div className="bg-[#181818] border-b border-gray-700 px-6 py-4 pr-60">
+      <div className="flex-1 flex flex-col lg:ml-0">        {/* Header */}
+        <div className={`${theme === 'dark' ? 'bg-[#181818] border-gray-700' : 'bg-white border-gray-200'} border-b px-6 py-4 pr-60`}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
+            <div className="flex items-center gap-4">              <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden text-gray-400 hover:text-white"
+                className={`lg:hidden ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
               >
                 <FaBars className="w-5 h-5" />
               </button>              <div className="flex items-center gap-3">
-                <HiSparkles className="w-6 h-6 text-green-400" />                <h2 className="text-xl font-bold text-white">
+                <HiSparkles className="w-6 h-6 text-green-400" />                <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {activeConversation ? activeConversation.title : 'Nueva Conversación'}
                 </h2>
                 {!activeConversation && (
@@ -298,10 +304,9 @@ export default function AIConversationPage() {
               </div>
             </div>
             {activeConversation && (
-              <div className="flex items-center gap-2">
-                <button
+              <div className="flex items-center gap-2">                <button
                   onClick={exportConversation}
-                  className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'text-gray-400 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
                   title="Exportar conversación"
                 >
                   <FaDownload className="w-4 h-4" />
@@ -317,29 +322,28 @@ export default function AIConversationPage() {
             <div className="flex-1 flex items-center justify-center">              <div className="text-center max-w-md">
                 <div className="bg-gradient-to-r from-green-400 to-green-500 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
                   <FaRobot className="w-10 h-10 text-black" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">¡Hola! Soy Xurp IA</h3>
-                <p className="text-gray-400 mb-6">
+                </div>                <h3 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>¡Hola! Soy Xurp IA</h3>
+                <p className={`mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                   Tu asistente inteligente para gestión de proyectos. Puedo ayudarte con:
                 </p>                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                  <div className="bg-gray-800/50 p-3 rounded-lg">
+                  <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
                     <div className="text-green-400 font-medium">💡 Planificación</div>
-                    <div className="text-gray-400">Organizar tareas y cronogramas</div>
+                    <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Organizar tareas y cronogramas</div>
                   </div>
-                  <div className="bg-gray-800/50 p-3 rounded-lg">
+                  <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
                     <div className="text-green-500 font-medium">🚀 Desarrollo</div>
-                    <div className="text-gray-400">Consejos de programación</div>
+                    <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Consejos de programación</div>
                   </div>
-                  <div className="bg-gray-800/50 p-3 rounded-lg">
+                  <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
                     <div className="text-green-400 font-medium">👥 Colaboración</div>
-                    <div className="text-gray-400">Gestión de equipos</div>
+                    <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Gestión de equipos</div>
                   </div>
-                  <div className="bg-gray-800/50 p-3 rounded-lg">
+                  <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
                     <div className="text-green-500 font-medium">📊 Análisis</div>
-                    <div className="text-gray-400">Métricas y reportes</div>
+                    <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Métricas y reportes</div>
                   </div>
                 </div>
-                <p className="text-gray-500 mt-6 text-sm">
+                <p className={`mt-6 text-sm ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                   ¿En qué puedo ayudarte hoy?
                 </p>
               </div>
@@ -365,22 +369,21 @@ export default function AIConversationPage() {
                   {/* Message Content */}
                   <div className={`group relative ${message.role === 'user' ? 'mr-3' : 'ml-3'}`}>                    <div className={`px-4 py-3 rounded-2xl ${
                       message.role === 'user'
-                        ? 'bg-[#4c4c4c] text-white'
-                        : 'bg-[#242625] text-white'
+                        ? theme === 'dark' ? 'bg-[#4c4c4c] text-white' : 'bg-blue-500 text-white'
+                        : theme === 'dark' ? 'bg-[#242625] text-white' : 'bg-gray-100 text-gray-900'
                     }`}>
                       <div className="prose prose-invert max-w-none">
                         <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
                       </div>
                     </div>
                     
-                    {/* Message Actions */}
-                    <div className={`flex items-center gap-2 mt-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <span className="text-xs text-gray-500">
+                    {/* Message Actions */}                    <div className={`flex items-center gap-2 mt-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <span className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                         {formatTime(message.timestamp)}
                       </span>
                       <button
                         onClick={() => copyMessage(message.content)}
-                        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-all duration-200 p-1 rounded"
+                        className={`opacity-0 group-hover:opacity-100 transition-all duration-200 p-1 rounded ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                         title="Copiar mensaje"
                       >
                         <FaCopy className="w-3 h-3" />
@@ -396,8 +399,7 @@ export default function AIConversationPage() {
               <div className="max-w-3xl flex items-start gap-3">
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-gray-800 to-black flex items-center justify-center">
                   <FaRobot className="w-5 h-5 text-green-400" />
-                </div>
-                <div className="ml-3 bg-black border border-green-500/30 px-4 py-3 rounded-2xl">
+                </div>                <div className={`ml-3 border px-4 py-3 rounded-2xl ${theme === 'dark' ? 'bg-black border-green-500/30' : 'bg-white border-green-300'}`}>
                   <div className="flex items-center gap-2">
                     <FaSpinner className="animate-spin w-4 h-4 text-green-400" />
                     <span className="text-green-400">Escribiendo...</span>
@@ -410,13 +412,13 @@ export default function AIConversationPage() {
           <div ref={messagesEndRef} />
         </div>        {/* Error Message */}
         {error && (
-          <div className="mx-6 mb-4 bg-red-500/20 border border-red-500/50 rounded-xl p-4">
-            <p className="text-red-200">{error}</p>
+          <div className={`mx-6 mb-4 rounded-xl p-4 ${theme === 'dark' ? 'bg-red-500/20 border-red-500/50' : 'bg-red-50 border-red-200'} border`}>
+            <p className={`${theme === 'dark' ? 'text-red-200' : 'text-red-800'}`}>{error}</p>
           </div>
         )}
 
         {/* Input Area */}
-        <div className="border-t border-gray-700 p-6">
+        <div className={`border-t p-6 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex items-end gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative">
               <textarea
@@ -430,7 +432,7 @@ export default function AIConversationPage() {
                 }}
                 placeholder="Escribe tu mensaje aquí... (Shift + Enter para nueva línea)"
                 disabled={loading}
-                className="w-full bg-[#303030] border border-gray-600 text-white px-4 py-3 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent min-h-[52px] max-h-32"
+                className={`w-full px-4 py-3 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent min-h-[52px] max-h-32 ${theme === 'dark' ? 'bg-[#303030] border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                 rows={1}
                 style={{ 
                   height: 'auto',
@@ -454,14 +456,11 @@ export default function AIConversationPage() {
                 <FaPaperPlane className="w-5 h-5" />
               )}
             </button>
-          </div>
-          <p className="text-center text-xs text-gray-500 mt-3">
+          </div>          <p className={`text-center text-xs mt-3 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
             Xurp IA puede cometer errores. Considera verificar información importante.
           </p>
         </div>
-      </div>
-
-      {/* Overlay for mobile sidebar */}
+      </div>      {/* Overlay for mobile sidebar */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
