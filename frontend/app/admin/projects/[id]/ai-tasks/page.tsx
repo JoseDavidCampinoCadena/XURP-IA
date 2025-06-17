@@ -333,10 +333,9 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
       case 'COMPLETED': return 'Completada';
       default: return 'Desconocido';
     }
-  };
-  if (loading && activeTab === 'tasks') {
+  };  if (loading && activeTab === 'tasks') {
     return (
-      <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
         <div className="flex items-center justify-center h-64">
           <FaSpinner className="animate-spin text-[#26D07C] w-8 h-8" />
           <span className={`ml-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando tareas de IA...</span>
@@ -346,9 +345,8 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
   }
 
   const taskProgress = calculateAITaskProgress();
-  const filteredTasks = getFilteredTasks();
-  return (
-    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+  const filteredTasks = getFilteredTasks();  return (
+    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

@@ -148,7 +148,7 @@ export default function CalendarPage() {
     }
   };  return (    
   
-  <div className={`p-8 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+  <div className={`p-8 min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
       {loading ? (
         <div className="flex justify-center items-center py-8">
           <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Cargando calendario...</div>

@@ -131,17 +131,16 @@ export default function SkillAssessmentPage() {
     loadQuestions();
   }, [loadQuestions]);  if (loading) {
     return (
-      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
         <div className="text-center">
           <FaSpinner className="animate-spin text-[#26D07C] w-8 h-8 mx-auto mb-4" />
           <span className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando evaluación...</span>
         </div>
       </div>
     );
-  }
-  if (questions.length === 0) {
+  }  if (questions.length === 0) {
     return (
-      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
         <div className={`rounded-2xl p-12 text-center max-w-md mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <FaBrain className={`w-16 h-16 mx-auto mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
           <h2 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Evaluación no disponible</h2>
@@ -157,10 +156,9 @@ export default function SkillAssessmentPage() {
         </div>
       </div>
     );
-  }
-  if (submitted && result) {
+  }  if (submitted && result) {
     return (
-      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
         <div className={`rounded-2xl p-12 text-center max-w-2xl mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="bg-gradient-to-r from-green-600 to-teal-600 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
             <FaCheck className="text-white w-10 h-10" />
@@ -211,15 +209,13 @@ export default function SkillAssessmentPage() {
         </div>
       </div>
     );
-  }
-  if (!hasStarted) {
+  }  if (!hasStarted) {
     return (
-      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
         <div className={`rounded-2xl p-12 text-center max-w-2xl mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
             <FaGraduationCap className="text-white w-10 h-10" />
           </div>
-          
           <h2 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Evaluación de Habilidades</h2>
           <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             Esta evaluación nos ayudará a asignarte tareas acordes a tu nivel de experiencia
@@ -250,9 +246,8 @@ export default function SkillAssessmentPage() {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-  const allAnswered = questions.every(q => answers[q.id] !== undefined);
-  return (
-    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+  const allAnswered = questions.every(q => answers[q.id] !== undefined);  return (
+    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className={`rounded-2xl p-6 mb-8 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>

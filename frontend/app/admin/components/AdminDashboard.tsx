@@ -41,7 +41,7 @@ export default function AdminDashboard({ project: providedProject }: AdminDashbo
     return (
       <div className="p-4 md:p-8">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <div className={`p-6 md:p-8 rounded-xl border max-w-md mx-auto ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-100 border-gray-200'}`}>
+          <div className={`p-6 md:p-8 rounded-xl border max-w-md mx-auto ${theme === 'dark' ? 'bg-[#18181b] border-black' : 'bg-gray-100 border-gray-200'}`}>
             <FaProjectDiagram className={`text-4xl md:text-6xl mx-auto mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
             <h2 className={`text-xl md:text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               No hay proyectos disponibles
@@ -61,7 +61,7 @@ export default function AdminDashboard({ project: providedProject }: AdminDashbo
     );
   }
   return (
-    <div className={`p-4 md:p-6 lg:p-8 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`p-4 md:p-6 lg:p-8 min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 md:mb-8 gap-4">
         <div className="flex-1">
@@ -74,7 +74,7 @@ export default function AdminDashboard({ project: providedProject }: AdminDashbo
         </div>
         
         {/* Project info card */}
-        <div className={`w-full lg:w-auto lg:min-w-[280px] xl:min-w-[320px] rounded-xl p-4 md:p-6 border shadow-lg ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className={`w-full lg:w-auto lg:min-w-[280px] xl:min-w-[320px] rounded-xl p-4 md:p-6 border shadow-lg mt-24 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center gap-3 mb-3">
             <div className={`w-3 h-3 rounded-full ${isOwner ? 'bg-yellow-400' : 'bg-green-400'}`}></div>
             <h3 className={`font-bold text-sm md:text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>

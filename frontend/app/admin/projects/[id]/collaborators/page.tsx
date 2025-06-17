@@ -200,7 +200,7 @@ export default function CollaboratorsPage() {
     if (!currentProjectId) {
       return <div className={`p-8 text-center ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>No tienes permisos para ver los colaboradores de este proyecto.</div>;
     }    return (
-        <div className={`p-4 md:p-8 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`p-4 md:p-8 min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
             <h1 className={`text-2xl md:text-3xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Gestión de Colaboradores</h1>
 
             <div className={`shadow-lg rounded-lg p-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
