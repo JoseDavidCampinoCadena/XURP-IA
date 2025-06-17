@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import Calendar from '../../../components/Calendar';
 import { IoClose } from 'react-icons/io5';
 import { Project } from '../../../../hooks/useProjects';
@@ -22,6 +23,7 @@ interface Event {
 export default function CalendarPage() {
   const params = useParams();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
@@ -144,26 +146,25 @@ export default function CalendarPage() {
         setError(errorMessage);
       }
     }
-  };
-  return (    
+  };  return (    
   
-  <div className="p-8">
+  <div className={`p-8 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {loading ? (
         <div className="flex justify-center items-center py-8">
-          <div className="text-gray-600 dark:text-gray-400">Cargando calendario...</div>
+          <div className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Cargando calendario...</div>
         </div>
       ) : error ? (
         <div className="flex justify-center items-center py-8">
-          <div className="text-red-600 dark:text-red-400">{error}</div>
+          <div className={`${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>{error}</div>
         </div>
       ) : (
         <>
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-black dark:text-white">Calendario de Proyecto</h1>
+            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>📅 Calendario de Proyecto</h1>
             <div className="flex items-center gap-4">
               {/* Show message for collaborators */}
               {!permissions.canCreateEvents && permissions.canViewCalendar && (
-                <span className="text-sm text-gray-500 dark:text-gray-400 mr-60">
+                <span className={`text-sm mr-60 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                   Solo lectura - No puedes crear eventos
                 </span>
               )}
@@ -171,7 +172,7 @@ export default function CalendarPage() {
               {permissions.canCreateEvents && (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 mr-60"
+                  className="bg-[#26D07C] hover:bg-[#20B369] text-white px-4 py-2 rounded-md transition-all duration-300 mr-60"
                 >
                   Añadir Evento
                 </button>

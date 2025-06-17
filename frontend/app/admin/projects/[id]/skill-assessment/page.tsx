@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { skillAssessmentsApi, SkillQuestion, AssessmentResult } from '@/app/api/skill-assessments.api';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useProjects } from '@/app/hooks/useProjects';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import { getUserPermissions } from '@/app/utils/permissions';
 import { 
   FaBrain, 
@@ -21,6 +22,7 @@ export default function SkillAssessmentPage() {
   const router = useRouter();
   const { user, loading: userLoading } = useAuth();
   const { projects, loading: projectsLoading } = useProjects();
+  const { theme } = useTheme();
   
   const projectId = parseInt(params.id as string);
   const project = projects.find((p) => p.id === projectId);
@@ -127,30 +129,28 @@ export default function SkillAssessmentPage() {
     }
   };  useEffect(() => {
     loadQuestions();
-  }, [loadQuestions]);
-  if (loading) {
+  }, [loadQuestions]);  if (loading) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
-          <FaSpinner className="animate-spin text-blue-400 w-8 h-8 mx-auto mb-4" />
-          <span className="text-white">Cargando evaluación...</span>
+          <FaSpinner className="animate-spin text-[#26D07C] w-8 h-8 mx-auto mb-4" />
+          <span className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando evaluación...</span>
         </div>
       </div>
     );
   }
-
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <div className="bg-gray-800/50 rounded-2xl p-12 text-center max-w-md mx-auto">
-          <FaBrain className="text-gray-400 w-16 h-16 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-4">Evaluación no disponible</h2>
-          <p className="text-gray-300 mb-6">
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`rounded-2xl p-12 text-center max-w-md mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
+          <FaBrain className={`w-16 h-16 mx-auto mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
+          <h2 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Evaluación no disponible</h2>
+          <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             La evaluación de habilidades no está configurada para este proyecto.
           </p>
           <button
             onClick={() => router.back()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300"
+            className="bg-[#26D07C] hover:bg-[#20B369] text-white px-6 py-3 rounded-xl font-medium transition-all duration-300"
           >
             Volver
           </button>
@@ -158,41 +158,40 @@ export default function SkillAssessmentPage() {
       </div>
     );
   }
-
   if (submitted && result) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <div className="bg-gray-800/50 rounded-2xl p-12 text-center max-w-2xl mx-auto">
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`rounded-2xl p-12 text-center max-w-2xl mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="bg-gradient-to-r from-green-600 to-teal-600 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
             <FaCheck className="text-white w-10 h-10" />
           </div>
           
-          <h2 className="text-3xl font-bold text-white mb-4">¡Evaluación Completada!</h2>
+          <h2 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>¡Evaluación Completada!</h2>
           
           <div className={`rounded-2xl p-6 mb-6 border ${getSkillLevelBg(result.skillLevel)}`}>
-            <h3 className="text-xl font-bold text-white mb-2">Tu nivel de habilidad:</h3>
+            <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Tu nivel de habilidad:</h3>
             <div className={`text-4xl font-bold ${getSkillLevelColor(result.skillLevel)} mb-4`}>
               {result.skillLevel}
             </div>
             <div className="grid grid-cols-2 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-white">{result.score}%</div>
-                <div className="text-gray-300 text-sm">Puntuación</div>
+                <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{result.score}%</div>
+                <div className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Puntuación</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-white">{result.correctAnswers}/{result.totalQuestions}</div>
-                <div className="text-gray-300 text-sm">Respuestas Correctas</div>
+                <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{result.correctAnswers}/{result.totalQuestions}</div>
+                <div className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Respuestas Correctas</div>
               </div>
             </div>
           </div>
 
           {result.recommendations.length > 0 && (
-            <div className="bg-blue-500/20 border border-blue-500/50 rounded-xl p-6 mb-6 text-left">
-              <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <div className={`rounded-xl p-6 mb-6 text-left ${theme === 'dark' ? 'bg-blue-500/20 border border-blue-500/50' : 'bg-blue-50 border border-blue-200'}`}>
+              <h4 className={`text-lg font-semibold mb-3 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 <FaLightbulb className="text-yellow-400" />
                 Recomendaciones
               </h4>
-              <ul className="text-gray-300 text-sm space-y-2">
+              <ul className={`text-sm space-y-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                 {result.recommendations.map((recommendation, index) => (
                   <li key={index}>• {recommendation}</li>
                 ))}
@@ -203,7 +202,7 @@ export default function SkillAssessmentPage() {
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => router.push(`/admin/projects/${projectId}`)}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2"
+              className="bg-gradient-to-r from-[#26D07C] to-[#20B369] hover:from-[#20B369] hover:to-[#1AA05E] text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center gap-2"
             >
               Ir al Proyecto
               <FaArrowRight className="w-4 h-4" />
@@ -213,23 +212,22 @@ export default function SkillAssessmentPage() {
       </div>
     );
   }
-
   if (!hasStarted) {
     return (
-      <div className="min-h-screen p-6 flex items-center justify-center">
-        <div className="bg-gray-800/50 rounded-2xl p-12 text-center max-w-2xl mx-auto">
+      <div className={`min-h-screen p-6 flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className={`rounded-2xl p-12 text-center max-w-2xl mx-auto ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
             <FaGraduationCap className="text-white w-10 h-10" />
           </div>
           
-          <h2 className="text-3xl font-bold text-white mb-4">Evaluación de Habilidades</h2>
-          <p className="text-gray-300 mb-6">
+          <h2 className={`text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Evaluación de Habilidades</h2>
+          <p className={`mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
             Esta evaluación nos ayudará a asignarte tareas acordes a tu nivel de experiencia
           </p>
           
-          <div className="bg-blue-500/20 border border-blue-500/50 rounded-xl p-6 mb-6 text-left">
-            <h3 className="text-lg font-semibold text-white mb-3">Información importante:</h3>
-            <ul className="text-gray-300 text-sm space-y-2">
+          <div className={`rounded-xl p-6 mb-6 text-left ${theme === 'dark' ? 'bg-blue-500/20 border border-blue-500/50' : 'bg-blue-50 border border-blue-200'}`}>
+            <h3 className={`text-lg font-semibold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Información importante:</h3>
+            <ul className={`text-sm space-y-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
               <li>• {questions.length} preguntas en total</li>
               <li>• Tiempo límite: 30 minutos</li>
               <li>• Puedes navegar entre preguntas antes de enviar</li>
@@ -240,7 +238,7 @@ export default function SkillAssessmentPage() {
 
           <button
             onClick={handleStartAssessment}
-            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 mx-auto"
+            className="bg-gradient-to-r from-[#26D07C] to-[#20B369] hover:from-[#20B369] hover:to-[#1AA05E] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 mx-auto"
           >
             <FaArrowRight className="w-5 h-5" />
             Comenzar Evaluación
@@ -253,43 +251,40 @@ export default function SkillAssessmentPage() {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
   const allAnswered = questions.every(q => answers[q.id] !== undefined);
-
   return (
-    <div className="min-h-screen p-6">
+    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-gray-800/50 rounded-2xl p-6 mb-8">
+        <div className={`rounded-2xl p-6 mb-8 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-3 rounded-xl">
                 <FaBrain className="text-white w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Evaluación de Habilidades</h1>
-                <p className="text-gray-300">Pregunta {currentQuestionIndex + 1} de {questions.length}</p>
+                <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Evaluación de Habilidades</h1>
+                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Pregunta {currentQuestionIndex + 1} de {questions.length}</p>
               </div>
             </div>
             
             <div className="text-right">
-              <div className={`text-2xl font-bold ${timeLeft < 300 ? 'text-red-400' : 'text-white'} flex items-center gap-2`}>
+              <div className={`text-2xl font-bold ${timeLeft < 300 ? 'text-red-400' : theme === 'dark' ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
                 <FaClock className="w-5 h-5" />
                 {formatTime(timeLeft)}
               </div>
-              <p className="text-gray-300 text-sm">Tiempo restante</p>
+              <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tiempo restante</p>
             </div>
           </div>
           
           {/* Progress Bar */}
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div className={`w-full rounded-full h-2 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}>
             <div 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-[#26D07C] to-[#20B369] h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
-        </div>
-
-        {/* Question Card */}
-        <div className="bg-gray-800/50 rounded-2xl p-8 mb-8">
+        </div>        {/* Question Card */}
+        <div className={`rounded-2xl p-8 mb-8 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -300,10 +295,10 @@ export default function SkillAssessmentPage() {
                 {currentQuestion.difficulty === 'BEGINNER' ? 'Principiante' :
                  currentQuestion.difficulty === 'INTERMEDIATE' ? 'Intermedio' : 'Avanzado'}
               </span>
-              <span className="text-gray-400 text-sm">{currentQuestion.category}</span>
+              <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{currentQuestion.category}</span>
             </div>
             
-            <h2 className="text-xl font-semibold text-white mb-6">
+            <h2 className={`text-xl font-semibold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {currentQuestion.question}
             </h2>
           </div>
@@ -315,15 +310,19 @@ export default function SkillAssessmentPage() {
                 onClick={() => handleAnswerSelect(currentQuestion.id, index)}
                 className={`w-full p-4 rounded-xl text-left transition-all duration-300 border ${
                   answers[currentQuestion.id] === index
-                    ? 'bg-blue-600/30 border-blue-500 text-white'
-                    : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500'
+                    ? theme === 'dark' 
+                      ? 'bg-[#26D07C]/20 border-[#26D07C] text-white' 
+                      : 'bg-[#26D07C]/10 border-[#26D07C] text-gray-900'
+                    : theme === 'dark'
+                      ? 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700 hover:border-gray-500'
+                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-4 h-4 rounded-full border-2 ${
                     answers[currentQuestion.id] === index
-                      ? 'border-blue-500 bg-blue-500'
-                      : 'border-gray-500'
+                      ? 'border-[#26D07C] bg-[#26D07C]'
+                      : theme === 'dark' ? 'border-gray-500' : 'border-gray-400'
                   }`}>
                     {answers[currentQuestion.id] === index && (
                       <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
@@ -334,14 +333,12 @@ export default function SkillAssessmentPage() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Navigation */}
+        </div>        {/* Navigation */}
         <div className="flex items-center justify-between">
           <button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'}`}
           >
             Anterior
           </button>
@@ -351,7 +348,7 @@ export default function SkillAssessmentPage() {
               <button
                 onClick={handleSubmit}
                 disabled={!allAnswered || submitting}
-                className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-gradient-to-r from-[#26D07C] to-[#20B369] hover:from-[#20B369] hover:to-[#1AA05E] text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {submitting ? (
                   <>
@@ -369,7 +366,7 @@ export default function SkillAssessmentPage() {
               <button
                 onClick={handleNext}
                 disabled={answers[currentQuestion.id] === undefined}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-[#26D07C] hover:bg-[#20B369] text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 Siguiente
                 <FaArrowRight className="w-4 h-4" />
@@ -379,8 +376,8 @@ export default function SkillAssessmentPage() {
         </div>
 
         {/* Answer Summary */}
-        <div className="mt-8 bg-gray-800/50 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Progreso de respuestas:</h3>
+        <div className={`mt-8 rounded-2xl p-6 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
+          <h3 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Progreso de respuestas:</h3>
           <div className="flex flex-wrap gap-2">
             {questions.map((_, index) => (
               <button
@@ -388,10 +385,12 @@ export default function SkillAssessmentPage() {
                 onClick={() => setCurrentQuestionIndex(index)}
                 className={`w-10 h-10 rounded-lg font-medium transition-all duration-300 ${
                   index === currentQuestionIndex
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-[#26D07C] text-white'
                     : answers[questions[index].id] !== undefined
                     ? 'bg-green-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : theme === 'dark'
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
                 {index + 1}

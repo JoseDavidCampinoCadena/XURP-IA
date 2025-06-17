@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import { aiTasksApi, AITask } from '@/app/api/ai-tasks.api';
-import { skillAssessmentsApi, SkillAssessment, SkillQuestion } from '@/app/api/skill-assessments.api';
+import { skillAssessmentsApi, SkillAssessment } from '@/app/api/skill-assessments.api';
 import { 
   FaBrain, 
   FaRobot, 
@@ -43,6 +44,7 @@ interface AITaskProgress {
 }
 
 export default function AITasksPage() {
+  const { theme } = useTheme();
   const params = useParams();
   const projectId = parseInt(params.id as string);
   const [aiTasks, setAiTasks] = useState<AITask[]>([]);
@@ -52,11 +54,9 @@ export default function AITasksPage() {
   const [isAssigning, setIsAssigning] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedSkillLevel, setSelectedSkillLevel] = useState<string | null>(null);
-  
-  // New state for skill assessments
+    // New state for skill assessments
   const [activeTab, setActiveTab] = useState<'tasks' | 'assessments'>('tasks');
   const [assessments, setAssessments] = useState<SkillAssessment[]>([]);
-  const [assessmentQuestions, setAssessmentQuestions] = useState<SkillQuestion[]>([]);
   const [loadingAssessments, setLoadingAssessments] = useState(false);
 
   const loadAITasks = useCallback(async () => {
@@ -72,7 +72,6 @@ export default function AITasksPage() {
       setLoading(false);
     }
   }, [projectId]);
-
   const loadAssessments = useCallback(async () => {
     try {
       setLoadingAssessments(true);
@@ -85,27 +84,16 @@ export default function AITasksPage() {
     }
   }, [projectId]);
 
-  const loadAssessmentQuestions = useCallback(async () => {
-    try {
-      const questions = await skillAssessmentsApi.getQuestions(projectId);
-      setAssessmentQuestions(questions);
-    } catch (err) {
-      console.error('Error loading assessment questions:', err);
-    }
-  }, [projectId]);
-
   useEffect(() => {
     if (projectId) {
       loadAITasks();
     }
   }, [projectId, loadAITasks]);
-
   useEffect(() => {
     if (projectId && activeTab === 'assessments') {
       loadAssessments();
-      loadAssessmentQuestions();
     }
-  }, [projectId, activeTab, loadAssessments, loadAssessmentQuestions]);
+  }, [projectId, activeTab, loadAssessments]);
   
   const generateAITasks = async () => {
     try {
@@ -346,13 +334,12 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
       default: return 'Desconocido';
     }
   };
-
   if (loading && activeTab === 'tasks') {
     return (
-      <div className="min-h-screen p-6">
+      <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="flex items-center justify-center h-64">
-          <FaSpinner className="animate-spin text-green-400 w-8 h-8" />
-          <span className="text-white ml-3">Cargando tareas de IA...</span>
+          <FaSpinner className="animate-spin text-[#26D07C] w-8 h-8" />
+          <span className={`ml-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando tareas de IA...</span>
         </div>
       </div>
     );
@@ -360,9 +347,8 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
 
   const taskProgress = calculateAITaskProgress();
   const filteredTasks = getFilteredTasks();
-
   return (
-    <div className="min-h-screen p-6">
+    <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -371,8 +357,8 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
               <FaBrain className="text-white w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Gestión Inteligente</h1>
-              <p className="text-gray-300">Tareas IA y Evaluaciones de Habilidad</p>
+              <h1 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Gestión Inteligente</h1>
+              <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tareas IA y Evaluaciones de Habilidad</p>
             </div>
           </div>
           
@@ -417,17 +403,17 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
               </button>
             )}
           </div>
-        </div>
-
-        {/* Tabs Navigation */}
-        <div className="bg-gray-800/50 rounded-2xl p-2 mb-8">
+        </div>        {/* Tabs Navigation */}
+        <div className={`rounded-2xl p-2 mb-8 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'}`}>
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('tasks')}
               className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                 activeTab === 'tasks'
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                  : theme === 'dark' 
+                    ? 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               <FaTasks className="w-5 h-5" />
@@ -438,7 +424,9 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
               className={`flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                 activeTab === 'assessments'
                   ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white shadow-lg'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                  : theme === 'dark' 
+                    ? 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               <FaUserGraduate className="w-5 h-5" />
@@ -451,31 +439,45 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
             </button>
           </div>
         </div>        {error && (
-          <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <div className={`border rounded-xl p-4 mb-6 flex items-center gap-3 ${
+            theme === 'dark' 
+              ? 'bg-red-500/20 border-red-500/50' 
+              : 'bg-red-50 border-red-200'
+          }`}>
             <FaExclamationTriangle className="text-red-400 w-5 h-5" />
-            <span className="text-red-200">{error}</span>
+            <span className={`${theme === 'dark' ? 'text-red-200' : 'text-red-800'}`}>{error}</span>
           </div>
         )}        {/* Smart Assignment Info */}
         {activeTab === 'tasks' && aiTasks.length > 0 && (
-          <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-6 mb-8">
+          <div className={`border rounded-2xl p-6 mb-8 ${
+            theme === 'dark' 
+              ? 'bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30' 
+              : 'bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200'
+          }`}>
             <div className="flex items-start gap-4">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl">
                 <FaBrain className="text-white w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                <h3 className={`text-xl font-bold mb-2 flex items-center gap-2 ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
                   🎯 Sistema de Asignación Inteligente
                 </h3>
-                <p className="text-blue-200 mb-4">
+                <p className={`mb-4 ${theme === 'dark' ? 'text-blue-200' : 'text-blue-700'}`}>
                   Nuestro sistema asigna tareas automáticamente considerando múltiples factores para optimizar el rendimiento del equipo.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-blue-100 flex items-center gap-2">
+                    <h4 className={`font-semibold flex items-center gap-2 ${
+                      theme === 'dark' ? 'text-blue-100' : 'text-blue-800'
+                    }`}>
                       <FaUserGraduate className="w-4 h-4" />
                       Factores de Asignación:
                     </h4>
-                    <ul className="text-sm text-blue-200 space-y-1 ml-6">
+                    <ul className={`text-sm space-y-1 ml-6 ${
+                      theme === 'dark' ? 'text-blue-200' : 'text-blue-700'
+                    }`}>
                       <li>• Nivel de habilidad del usuario</li>
                       <li>• Evaluaciones de competencias</li>
                       <li>• Experiencia en tecnologías</li>
@@ -483,11 +485,15 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                     </ul>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-blue-100 flex items-center gap-2">
+                    <h4 className={`font-semibold flex items-center gap-2 ${
+                      theme === 'dark' ? 'text-blue-100' : 'text-blue-800'
+                    }`}>
                       <FaClock className="w-4 h-4" />
                       Límites Inteligentes:
                     </h4>
-                    <ul className="text-sm text-blue-200 space-y-1 ml-6">
+                    <ul className={`text-sm space-y-1 ml-6 ${
+                      theme === 'dark' ? 'text-blue-200' : 'text-blue-700'
+                    }`}>
                       <li>• Máximo 1 tarea por usuario/día</li>
                       <li>• Priorización por día de proyecto</li>
                       <li>• Balance automático de carga</li>
@@ -495,8 +501,14 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                     </ul>
                   </div>
                 </div>
-                <div className="mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-200 text-sm">
+                <div className={`mt-4 p-4 border rounded-lg ${
+                  theme === 'dark' 
+                    ? 'bg-green-500/20 border-green-500/30' 
+                    : 'bg-green-50 border-green-200'
+                }`}>
+                  <div className={`flex items-center gap-2 text-sm ${
+                    theme === 'dark' ? 'text-green-200' : 'text-green-800'
+                  }`}>
                     <FaCheck className="w-4 h-4" />
                     <strong>Nuevo:</strong> Las tareas sin asignar se asignan automáticamente al usuario que las inicia
                   </div>
@@ -509,12 +521,19 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
         {/* Tab Content */}
         {activeTab === 'tasks' ? (
           // Tasks Tab Content
-          <>
-            {aiTasks.length === 0 ? (
-              <div className="bg-gray-800/50 rounded-2xl p-12 text-center">
-                <FaRobot className="text-gray-400 w-16 h-16 mx-auto mb-6" />
-                <h2 className="text-2xl font-bold text-white mb-4">No hay tareas de IA generadas</h2>
-                <p className="text-gray-300 mb-6">
+          <>            {aiTasks.length === 0 ? (
+              <div className={`rounded-2xl p-12 text-center ${
+                theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+              }`}>
+                <FaRobot className={`w-16 h-16 mx-auto mb-6 ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                }`} />
+                <h2 className={`text-2xl font-bold mb-4 ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>No hay tareas de IA generadas</h2>
+                <p className={`mb-6 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                   Genera tareas automáticamente basadas en el análisis de IA de tu proyecto
                 </p>
                 <button
@@ -539,42 +558,60 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
               <>
                 {/* Progress Overview */}
                 <div className="grid md:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
                       <FaTasks className="text-blue-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">{taskProgress.totalTasks}</span>
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{taskProgress.totalTasks}</span>
                     </div>
-                    <p className="text-gray-300">Total Tareas</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Total Tareas</p>
                   </div>
                   
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
-                      <FaCheck className="text-green-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">{taskProgress.completedTasks}</span>
+                      <FaCheck className="text-[#26D07C] w-8 h-8" />
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{taskProgress.completedTasks}</span>
                     </div>
-                    <p className="text-gray-300">Completadas</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Completadas</p>
                   </div>
                   
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
                       <FaPlay className="text-blue-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">{taskProgress.inProgressTasks}</span>
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{taskProgress.inProgressTasks}</span>
                     </div>
-                    <p className="text-gray-300">En Progreso</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>En Progreso</p>
                   </div>
                   
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
                       <FaChartLine className="text-purple-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">{Math.round(taskProgress.progressPercentage)}%</span>
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{Math.round(taskProgress.progressPercentage)}%</span>
                     </div>
-                    <p className="text-gray-300">Progreso</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Progreso</p>
                   </div>
-                </div>
-
-                {/* Filters */}
-                <div className="bg-gray-800/50 rounded-2xl p-6 mb-8">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                </div>                {/* Filters */}
+                <div className={`rounded-2xl p-6 mb-8 ${
+                  theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                }`}>
+                  <h3 className={`text-xl font-bold mb-4 flex items-center gap-3 ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
                     <FaLightbulb className="text-yellow-400" />
                     Filtros
                   </h3>
@@ -582,14 +619,18 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Day Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-3">Por Día</label>
+                      <label className={`block text-sm font-semibold mb-3 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Por Día</label>
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setSelectedDay(null)}
                           className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                             selectedDay === null 
                               ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : theme === 'dark'
+                                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
                           Todos
@@ -601,7 +642,9 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                             className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                               selectedDay === day.day 
                                 ? 'bg-blue-600 text-white' 
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                : theme === 'dark'
+                                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
                             Día {day.day}
@@ -612,14 +655,18 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
 
                     {/* Skill Level Filter */}
                     <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-3">Por Nivel</label>
+                      <label className={`block text-sm font-semibold mb-3 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>Por Nivel</label>
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => setSelectedSkillLevel(null)}
                           className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                             selectedSkillLevel === null 
                               ? 'bg-purple-600 text-white' 
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : theme === 'dark'
+                                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
                           Todos
@@ -631,7 +678,9 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                             className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 ${
                               selectedSkillLevel === level 
                                 ? 'bg-purple-600 text-white' 
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                : theme === 'dark'
+                                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
                             <div className={`w-3 h-3 rounded-full ${getSkillLevelColor(level)}`}></div>
@@ -641,13 +690,15 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Tasks List */}
-                <div className="bg-gray-800/50 rounded-2xl p-6">
+                </div>                {/* Tasks List */}
+                <div className={`rounded-2xl p-6 ${
+                  theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                }`}>
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
-                      <FaTasks className="text-green-400" />
+                    <h3 className={`text-xl font-bold flex items-center gap-3 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      <FaTasks className="text-[#26D07C]" />
                       Tareas ({filteredTasks.length})
                     </h3>
                       {aiTasks.some(task => !task.assignee) && (
@@ -672,14 +723,20 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                         
                         {/* Tooltip */}
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                          <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg border border-gray-600">
+                          <div className={`text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg border ${
+                            theme === 'dark' 
+                              ? 'bg-gray-900 text-white border-gray-600' 
+                              : 'bg-white text-gray-900 border-gray-200'
+                          }`}>
                             <div className="text-center">
                               <p className="font-semibold mb-1">🎯 Asignación Inteligente</p>
                               <p>✓ Considera nivel de habilidades</p>
                               <p>✓ Máximo 1 tarea por día</p>
                               <p>✓ Balance de carga</p>
                             </div>
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                            <div className={`absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${
+                              theme === 'dark' ? 'border-t-gray-900' : 'border-t-white'
+                            }`}></div>
                           </div>
                         </div>
                       </div>
@@ -688,15 +745,23 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
 
                   {filteredTasks.length === 0 ? (
                     <div className="text-center py-12">
-                      <FaTasks className="text-gray-400 w-12 h-12 mx-auto mb-4" />
-                      <p className="text-gray-300">No hay tareas que coincidan con los filtros seleccionados</p>
+                      <FaTasks className={`w-12 h-12 mx-auto mb-4 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                      }`} />
+                      <p className={`${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      }`}>No hay tareas que coincidan con los filtros seleccionados</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {filteredTasks.map((task) => (
                         <div
                           key={task.id}
-                          className="bg-gray-700/50 rounded-xl p-6 border border-gray-600/50 hover:border-green-400/30 transition-all duration-300"
+                          className={`rounded-xl p-6 border transition-all duration-300 ${
+                            theme === 'dark' 
+                              ? 'bg-gray-700/50 border-gray-600/50 hover:border-[#26D07C]/30' 
+                              : 'bg-gray-50 border-gray-200 hover:border-[#26D07C]/50'
+                          }`}
                         >
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
@@ -705,16 +770,26 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                                   Día {task.dayNumber}
                                 </span>
                                 <div className={`w-3 h-3 rounded-full ${getSkillLevelColor(task.skillLevel)}`}></div>
-                                <span className="text-gray-300 text-sm">{task.skillLevel}</span>
+                                <span className={`text-sm ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                }`}>{task.skillLevel}</span>
                                 <div className="flex items-center gap-2">
                                   {getStatusIcon(task.status)}
-                                  <span className="text-gray-300 text-sm">{getStatusText(task.status)}</span>
+                                  <span className={`text-sm ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                  }`}>{getStatusText(task.status)}</span>
                                 </div>
                               </div>
                               
-                              <h4 className="text-lg font-semibold text-white mb-2">{task.title}</h4>
-                              <p className="text-gray-300 mb-3">{task.description}</p>
-                                <div className="flex items-center gap-4 text-sm text-gray-400">
+                              <h4 className={`text-lg font-semibold mb-2 ${
+                                theme === 'dark' ? 'text-white' : 'text-gray-900'
+                              }`}>{task.title}</h4>
+                              <p className={`mb-3 ${
+                                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                              }`}>{task.description}</p>
+                                <div className={`flex items-center gap-4 text-sm ${
+                                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                              }`}>
                                 <div className="flex items-center gap-2">
                                   <FaClock />
                                   <span>Estimado: {task.estimatedHours}h</span>
@@ -725,7 +800,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                                     <span>Asignado: {task.assignee.name}</span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center gap-2 text-yellow-400">
+                                  <div className="flex items-center gap-2 text-yellow-500">
                                     <FaUser />
                                     <span>Sin asignar</span>
                                   </div>
@@ -736,7 +811,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                               {task.status === 'PENDING' && (
                                 <div className="flex flex-col items-end gap-2">
                                   {!task.assignee && (
-                                    <span className="text-xs text-yellow-400 px-2 py-1 bg-yellow-400/20 rounded-full">
+                                    <span className="text-xs text-yellow-600 px-2 py-1 bg-yellow-400/20 rounded-full">
                                       Se asignará automáticamente
                                     </span>
                                   )}
@@ -754,7 +829,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                               {task.status === 'IN_PROGRESS' && (
                                 <button
                                   onClick={() => completeTask(task.id)}
-                                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2"
+                                  className="bg-[#26D07C] hover:bg-[#20B569] text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2"
                                 >
                                   <FaCheck className="w-4 h-4" />
                                   Completar
@@ -762,7 +837,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                               )}
                               
                               {task.status === 'COMPLETED' && (
-                                <span className="text-green-400 px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+                                <span className="text-[#26D07C] px-4 py-2 rounded-lg font-medium flex items-center gap-2">
                                   <FaCheck className="w-4 h-4" />
                                   Completada
                                 </span>
@@ -771,11 +846,13 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                           </div>
                           
                           {/* Progress bar for the task */}
-                          <div className="w-full bg-gray-600 rounded-full h-2">
+                          <div className={`w-full rounded-full h-2 ${
+                            theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'
+                          }`}>
                             <div 
                               className={`h-2 rounded-full transition-all duration-300 ${
-                                task.status === 'COMPLETED' ? 'bg-green-500' : 
-                                task.status === 'IN_PROGRESS' ? 'bg-blue-500' : 'bg-gray-500'
+                                task.status === 'COMPLETED' ? 'bg-[#26D07C]' : 
+                                task.status === 'IN_PROGRESS' ? 'bg-blue-500' : 'bg-gray-400'
                               }`}
                               style={{ 
                                 width: task.status === 'COMPLETED' ? '100%' : 
@@ -790,68 +867,93 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                 </div>
               </>
             )}
-          </>
-        ) : (
+          </>        ) : (
           // Assessments Tab Content
           <div className="space-y-8">
             {loadingAssessments ? (
               <div className="flex items-center justify-center h-64">
-                <FaSpinner className="animate-spin text-green-400 w-8 h-8" />
-                <span className="text-white ml-3">Cargando evaluaciones...</span>
+                <FaSpinner className="animate-spin text-[#26D07C] w-8 h-8" />
+                <span className={`ml-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando evaluaciones...</span>
               </div>
             ) : (
               <>
                 {/* Assessment Overview */}
                 <div className="grid md:grid-cols-3 gap-6">
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
                       <FaUsers className="text-blue-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">{assessments.length}</span>
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{assessments.length}</span>
                     </div>
-                    <p className="text-gray-300">Evaluaciones Completadas</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Evaluaciones Completadas</p>
                   </div>
                   
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
-                      <FaUserGraduate className="text-green-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">
+                      <FaUserGraduate className="text-[#26D07C] w-8 h-8" />
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {assessments.filter(a => a.skillLevel === 'Avanzado').length}
                       </span>
                     </div>
-                    <p className="text-gray-300">Nivel Avanzado</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Nivel Avanzado</p>
                   </div>
                   
-                  <div className="bg-gray-800/50 rounded-2xl p-6">
+                  <div className={`rounded-2xl p-6 ${
+                    theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                  }`}>
                     <div className="flex items-center justify-between mb-4">
                       <FaChartLine className="text-purple-400 w-8 h-8" />
-                      <span className="text-2xl font-bold text-white">
+                      <span className={`text-2xl font-bold ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>
                         {assessments.length > 0 
                           ? Math.round(assessments.reduce((acc, a) => acc + a.score, 0) / assessments.length)
                           : 0}%
                       </span>
                     </div>
-                    <p className="text-gray-300">Puntuación Promedio</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Puntuación Promedio</p>
                   </div>
-                </div>
-
-                {/* Assessments List */}
-                <div className="bg-gray-800/50 rounded-2xl p-6">
+                </div>                {/* Assessments List */}
+                <div className={`rounded-2xl p-6 ${
+                  theme === 'dark' ? 'bg-gray-800/50' : 'bg-white border border-gray-200'
+                }`}>
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
-                      <FaUserGraduate className="text-green-400" />
+                    <h3 className={`text-xl font-bold flex items-center gap-3 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      <FaUserGraduate className="text-[#26D07C]" />
                       Evaluaciones de Colaboradores
                     </h3>
                   </div>
 
                   {assessments.length === 0 ? (
                     <div className="text-center py-12">
-                      <FaUserGraduate className="text-gray-400 w-12 h-12 mx-auto mb-4" />
-                      <h3 className="text-xl font-bold text-white mb-2">No hay evaluaciones completadas</h3>
-                      <p className="text-gray-300 mb-6">
+                      <FaUserGraduate className={`w-12 h-12 mx-auto mb-4 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                      }`} />
+                      <h3 className={`text-xl font-bold mb-2 ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>No hay evaluaciones completadas</h3>
+                      <p className={`mb-6 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      }`}>
                         Los colaboradores pueden completar una evaluación de habilidades cuando se unan al proyecto
                       </p>
-                      <div className="bg-blue-500/20 border border-blue-500/50 rounded-xl p-4">
-                        <p className="text-blue-200 text-sm">
+                      <div className={`border rounded-xl p-4 ${
+                        theme === 'dark' 
+                          ? 'bg-blue-500/20 border-blue-500/50' 
+                          : 'bg-blue-50 border-blue-200'
+                      }`}>
+                        <p className={`text-sm ${
+                          theme === 'dark' ? 'text-blue-200' : 'text-blue-800'
+                        }`}>
                           💡 <strong>Consejo:</strong> Las evaluaciones ayudan a asignar tareas automáticamente basadas en el nivel de habilidad de cada colaborador
                         </p>
                       </div>
@@ -861,29 +963,47 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                       {assessments.map((assessment) => (
                         <div
                           key={assessment.id}
-                          className="bg-gray-700/50 rounded-xl p-6 border border-gray-600/50 hover:border-green-400/30 transition-all duration-300"
+                          className={`rounded-xl p-6 border transition-all duration-300 ${
+                            theme === 'dark' 
+                              ? 'bg-gray-700/50 border-gray-600/50 hover:border-[#26D07C]/30' 
+                              : 'bg-gray-50 border-gray-200 hover:border-[#26D07C]/50'
+                          }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                              <div className="bg-gradient-to-r from-green-600 to-teal-600 p-3 rounded-xl">
+                              <div className="bg-gradient-to-r from-[#26D07C] to-teal-600 p-3 rounded-xl">
                                 <FaUser className="text-white w-6 h-6" />
                               </div>
                               <div>
-                                <h4 className="text-lg font-semibold text-white">{assessment.user.name}</h4>
-                                <p className="text-gray-300 text-sm">{assessment.user.email}</p>
+                                <h4 className={`text-lg font-semibold ${
+                                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                }`}>{assessment.user.name}</h4>
+                                <p className={`text-sm ${
+                                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                }`}>{assessment.user.email}</p>
                                 <div className="flex items-center gap-3 mt-2">
                                   <div className={`w-3 h-3 rounded-full ${getSkillLevelColor(assessment.skillLevel)}`}></div>
-                                  <span className="text-gray-300 text-sm font-medium">{assessment.skillLevel}</span>
-                                  <span className="text-gray-400 text-sm">•</span>
-                                  <span className="text-gray-300 text-sm">{assessment.score}% de aciertos</span>
+                                  <span className={`text-sm font-medium ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                  }`}>{assessment.skillLevel}</span>
+                                  <span className={`text-sm ${
+                                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                  }`}>•</span>
+                                  <span className={`text-sm ${
+                                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                                  }`}>{assessment.score}% de aciertos</span>
                                 </div>
                               </div>
                             </div>
                             
                             <div className="flex items-center gap-3">
                               <div className="text-center">
-                                <div className="text-2xl font-bold text-white">{assessment.score}%</div>
-                                <div className="text-xs text-gray-400">Puntuación</div>
+                                <div className={`text-2xl font-bold ${
+                                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                }`}>{assessment.score}%</div>
+                                <div className={`text-xs ${
+                                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                }`}>Puntuación</div>
                               </div>
                               <button
                                 onClick={() => resetUserAssessment(assessment.userId)}
@@ -896,7 +1016,9 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                             </div>
                           </div>
                           
-                          <div className="mt-4 text-xs text-gray-400">
+                          <div className={`mt-4 text-xs ${
+                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
                             Completada el {new Date(assessment.completedAt).toLocaleDateString('es-ES', {
                               year: 'numeric',
                               month: 'long',
@@ -909,15 +1031,21 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                       ))}
                     </div>
                   )}
-                </div>
-
-                {/* Information Card */}
-                <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/50 rounded-xl p-6">
+                </div>                {/* Information Card */}
+                <div className={`border rounded-xl p-6 ${
+                  theme === 'dark' 
+                    ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-500/50' 
+                    : 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200'
+                }`}>
                   <div className="flex items-start gap-4">
                     <FaCog className="text-purple-400 w-6 h-6 mt-1" />
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-2">¿Cómo funciona el sistema de evaluaciones?</h3>
-                      <ul className="text-gray-300 text-sm space-y-2">
+                      <h3 className={`text-lg font-semibold mb-2 ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>¿Cómo funciona el sistema de evaluaciones?</h3>
+                      <ul className={`text-sm space-y-2 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
                         <li>• Los colaboradores completan una evaluación al unirse al proyecto</li>
                         <li>• El sistema determina automáticamente su nivel: Principiante, Intermedio o Avanzado</li>
                         <li>• Las tareas se asignan automáticamente basándose en el nivel de habilidad</li>

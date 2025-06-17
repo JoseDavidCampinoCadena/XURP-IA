@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FaUserCircle, FaCopy } from 'react-icons/fa';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import { useProjects } from '@/app/hooks/useProjects';
 import { useCollaborators } from '@/app/hooks/useCollaborators';
 import { collaboratorsApi } from '@/app/api/collaborators.api';
@@ -31,6 +32,7 @@ const INTERESES = [
 
 export default function CollaboratorsPage() {
     const { user } = useAuth();
+    const { theme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [invitationCode, setInvitationCode] = useState<{ code: string; expiresAt?: string } | null>(null);
     const [isGeneratingCode, setIsGeneratingCode] = useState(false);
@@ -183,43 +185,38 @@ export default function CollaboratorsPage() {
             default:
                 return 'text-gray-400';
         }
-    };
-
-    if (loadingProjects) {
-        return <div className="p-8 text-center">Cargando proyectos...</div>;
+    };    if (loadingProjects) {
+        return <div className={`p-8 text-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Cargando proyectos...</div>;
     }
 
     if (!user) {
-      return <div className="p-8 text-center text-red-500">Debes iniciar sesión para ver los colaboradores.</div>;
+      return <div className={`p-8 text-center ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>Debes iniciar sesión para ver los colaboradores.</div>;
     }
 
     if (accessibleProjects.length === 0) {
-      return <div className="p-8 text-center text-red-500">No tienes proyectos disponibles.</div>;
+      return <div className={`p-8 text-center ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>No tienes proyectos disponibles.</div>;
     }
 
     if (!currentProjectId) {
-      return <div className="p-8 text-center text-red-500">No tienes permisos para ver los colaboradores de este proyecto.</div>;
-    }
+      return <div className={`p-8 text-center ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>No tienes permisos para ver los colaboradores de este proyecto.</div>;
+    }    return (
+        <div className={`p-4 md:p-8 min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            <h1 className={`text-2xl md:text-3xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Gestión de Colaboradores</h1>
 
-    return (
-        <div className="p-4 md:p-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-white mb-6">Gestión de Colaboradores</h1>
-
-            <div className="card bg-white dark:bg-zinc-800 shadow-lg rounded-lg p-6">
+            <div className={`shadow-lg rounded-lg p-6 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
                 {/* Sección para añadir manualmente y generar código */}
                 {isOwner && (
                     <div className="flex flex-wrap gap-4 mb-8 items-center">
                         {/* Botón de Sugerencias de IA */}
                         <button
                             onClick={() => setIsModalOpen((prev) => !prev)}
-                            className="bg-indigo-600 text-white px-5 py-2.5 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
+                            className="bg-gradient-to-r from-[#26D07C] to-[#20B369] hover:from-[#20B369] hover:to-[#1AA05E] text-white px-5 py-2.5 rounded-md transition-all duration-300 text-sm font-medium"
                         >
                             Sugerencias de IA
-                        </button>
-                        <button
+                        </button>                        <button
                             onClick={handleGenerateInvitationCode}
                             disabled={isGeneratingCode || !currentProjectId}
-                            className="bg-green-500 text-white px-5 py-2.5 rounded-md hover:bg-green-600 transition-colors text-sm font-medium disabled:opacity-50"
+                            className="bg-[#26D07C] hover:bg-[#20B369] text-white px-5 py-2.5 rounded-md transition-all duration-300 text-sm font-medium disabled:opacity-50"
                         >
                             {isGeneratingCode ? 'Generando Código...' : 'Generar Código de Invitación'}
                         </button>
@@ -227,9 +224,8 @@ export default function CollaboratorsPage() {
                 )}
 
                 {/* Sección para mostrar el código generado */}
-                {invitationCode && (
-                    <div className="mb-8 p-4 border border-dashed border-green-500 rounded-md bg-green-50 dark:bg-green-900 dark:border-green-700">
-                        <p className="text-sm text-green-700 dark:text-green-300 mb-1">Comparte este código para que otros se unan al proyecto:</p>
+                {invitationCode && (                    <div className={`mb-8 p-4 border border-dashed border-green-500 rounded-md ${theme === 'dark' ? 'bg-green-900 border-green-700' : 'bg-green-50'}`}>
+                        <p className={`text-sm mb-1 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>Comparte este código para que otros se unan al proyecto:</p>
                         <div className="flex items-center gap-3">
                             <strong className="text-lg font-mono text-green-800 dark:text-green-200 bg-green-200 dark:bg-green-800 px-2 py-1 rounded">
                                 {invitationCode.code}
