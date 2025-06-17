@@ -87,7 +87,7 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className={`w-64 ${theme === 'dark' ? 'bg-zinc-900' : 'bg-white border-r border-gray-200'}`}>
+    <aside className={`w-64 ${theme === 'dark' ? 'bg-zinc-900 border-r border-black' : 'bg-white border-r border-gray-200'}`}>
       <div className="p-6">
         <Link href="/admin" className="flex items-center space-x-2">
           <span className="text-2xl font-bold text-green-500">XURP IA</span>

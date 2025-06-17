@@ -123,31 +123,28 @@ export default function SettingsPage() {
       }
     }
   };
-
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-          Configuración de {currentProject?.name || 'Proyecto'}
-        </h1>
-        {showSavedMessage && (
-          <div className="bg-green-500 text-white px-4 py-2 rounded-md">
-            Configuraciones guardadas correctamente
-          </div>
-        )}
-      </div>
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Configuración General */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm`}>
-          <div className="flex items-center gap-2 mb-6">
-            <FaCog className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
-            <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              General
-            </h2>
-          </div>
-          <div className="space-y-4">
-            <div>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
+      <div className="p-6 md:p-8 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            Configuración de {currentProject?.name || 'Proyecto'}
+          </h1>
+          {showSavedMessage && (
+            <div className="bg-[#26D07C] text-white px-4 py-2 rounded-md">
+              Configuraciones guardadas correctamente
+            </div>
+          )}
+        </div>        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Configuración General */}
+          <div className={`rounded-lg p-6 shadow-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className="flex items-center gap-2 mb-6">
+              <FaCog className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
+              <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                General
+              </h2>
+            </div>
+          <div className="space-y-4">            <div>
               <label className={`block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 Nombre del Proyecto
               </label>
@@ -157,15 +154,13 @@ export default function SettingsPage() {
                 onChange={(e) => handleChange('name', e.target.value)}
                 className={`w-full px-4 py-2 rounded-md ${
                   theme === 'dark'
-                    ? 'bg-zinc-900 text-white'
+                    ? 'bg-gray-700 text-white border border-gray-600'
                     : 'bg-gray-100 text-gray-900 border border-gray-200'
                 }`}
                 required
                 disabled={isReadOnly}
               />
-            </div>
-
-            <div>
+            </div>            <div>
               <label className={`block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 Logo del Proyecto (URL de imagen)
               </label>
@@ -175,7 +170,7 @@ export default function SettingsPage() {
                 onChange={(e) => handleChange('logo', e.target.value)}
                 className={`w-full px-4 py-2 rounded-md ${
                   theme === 'dark'
-                    ? 'bg-zinc-900 text-white'
+                    ? 'bg-gray-700 text-white border border-gray-600'
                     : 'bg-gray-100 text-gray-900 border border-gray-200'
                 }`}
                 required
@@ -188,9 +183,7 @@ export default function SettingsPage() {
                   className="w-16 h-16 rounded-full mt-2 border"
                 />
               )}
-            </div>
-
-            <div>
+            </div>            <div>
               <label className={`block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 Ubicación
               </label>
@@ -200,15 +193,13 @@ export default function SettingsPage() {
                 onChange={(e) => handleChange('location', e.target.value)}
                 className={`w-full px-4 py-2 rounded-md ${
                   theme === 'dark'
-                    ? 'bg-zinc-900 text-white'
+                    ? 'bg-gray-700 text-white border border-gray-600'
                     : 'bg-gray-100 text-gray-900 border border-gray-200'
                 }`}
                 placeholder="Ciudad, país, remoto, etc."
                 disabled={isReadOnly}
               />
-            </div>
-
-            <div>
+            </div>            <div>
               <label className={`block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 Descripción
               </label>
@@ -217,7 +208,7 @@ export default function SettingsPage() {
                 onChange={(e) => handleChange('description', e.target.value)}
                 className={`w-full px-4 py-2 rounded-md ${
                   theme === 'dark'
-                    ? 'bg-zinc-900 text-white'
+                    ? 'bg-gray-700 text-white border border-gray-600'
                     : 'bg-white text-gray-900 border border-gray-200'
                 }`}
                 rows={4}
@@ -225,10 +216,8 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-        </div>
-
-        {/* Notificaciones */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm`}>
+        </div>        {/* Notificaciones */}
+        <div className={`rounded-lg p-6 shadow-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
             <FaBell className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -241,8 +230,7 @@ export default function SettingsPage() {
               <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
                 Notificaciones por email
               </span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
+              <label className="relative inline-flex items-center cursor-pointer">                <input
                   type="checkbox"
                   checked={settings.emailNotifications}
                   onChange={(e) => handleChange('emailNotifications', e.target.checked)}
@@ -252,8 +240,8 @@ export default function SettingsPage() {
                 <div
                   className={`w-11 h-6 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
                     theme === 'dark'
-                      ? 'bg-zinc-700 peer-checked:bg-green-500'
-                      : 'bg-gray-200 peer-checked:bg-green-500'
+                      ? 'bg-gray-700 peer-checked:bg-[#26D07C]'
+                      : 'bg-gray-200 peer-checked:bg-[#26D07C]'
                   }`}
                 ></div>
               </label>
@@ -263,8 +251,7 @@ export default function SettingsPage() {
               <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
                 Notificaciones push
               </span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
+              <label className="relative inline-flex items-center cursor-pointer">                <input
                   type="checkbox"
                   checked={settings.pushNotifications}
                   onChange={(e) => handleChange('pushNotifications', e.target.checked)}
@@ -274,8 +261,8 @@ export default function SettingsPage() {
                 <div
                   className={`w-11 h-6 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
                     theme === 'dark'
-                      ? 'bg-zinc-700 peer-checked:bg-green-500'
-                      : 'bg-gray-200 peer-checked:bg-green-500'
+                      ? 'bg-gray-700 peer-checked:bg-[#26D07C]'
+                      : 'bg-gray-200 peer-checked:bg-[#26D07C]'
                   }`}
                 ></div>
               </label>
@@ -285,13 +272,16 @@ export default function SettingsPage() {
       </form>
 
       
-        
-        {isOwner && (
+          {isOwner && (
           <div className="flex justify-end mt-6">
           <button
           type="button"
           onClick={handleResetSettings}
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 mr-2"
+          className={`px-4 py-2 rounded hover:opacity-80 mr-2 ${
+            theme === 'dark'
+              ? 'bg-gray-600 text-white hover:bg-gray-500'
+              : 'bg-gray-500 text-white hover:bg-gray-600'
+          }`}
           disabled={isReadOnly}
         >
           Restablecer
@@ -299,7 +289,7 @@ export default function SettingsPage() {
         <button
           type="submit"
           onClick={handleSubmit}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="px-4 py-2 bg-[#26D07C] text-white rounded hover:bg-[#22C572]"
           disabled={isSaving || isReadOnly}
         >
           {isSaving ? 'Guardando...' : 'Guardar Cambios'}
@@ -307,7 +297,11 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={handleDeleteProject}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 ml-2"
+            className={`px-4 py-2 rounded hover:opacity-80 ml-2 ${
+              theme === 'dark'
+                ? 'bg-red-600 text-white hover:bg-red-500'
+                : 'bg-red-500 text-white hover:bg-red-600'
+            }`}
             disabled={isDeleting}
           >
             {isDeleting ? 'Eliminando...' : 'Eliminar Proyecto'}
@@ -315,5 +309,6 @@ export default function SettingsPage() {
           </div>
         )}
       </div>
+    </div>
   );
 }

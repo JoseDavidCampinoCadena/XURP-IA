@@ -170,16 +170,17 @@ export default function ProgressPage() {
 
     return Array.from(dailyMap.values()).sort((a, b) => a.day - b.day);
   };
-
   if (loading) {
     return (
-      <div className="p-6 md:p-8 max-w-7xl mx-auto">
-        <div className="animate-pulse">
-          <div className={`h-8 ${theme === 'dark' ? 'bg-zinc-700' : 'bg-gray-200'} rounded mb-8 w-64`}></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className={`h-64 ${theme === 'dark' ? 'bg-zinc-700' : 'bg-gray-200'} rounded`}></div>
-            ))}
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
+        <div className="p-6 md:p-8 max-w-7xl mx-auto">
+          <div className="animate-pulse">
+            <div className={`h-8 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} rounded mb-8 w-64`}></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className={`h-64 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} rounded`}></div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -188,9 +189,11 @@ export default function ProgressPage() {
 
   if (error) {
     return (
-      <div className="p-6 md:p-8 max-w-7xl mx-auto">
-        <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-red-900/20 text-red-400' : 'bg-red-100 text-red-600'}`}>
-          {error}
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
+        <div className="p-6 md:p-8 max-w-7xl mx-auto">
+          <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-red-900/20 text-red-400' : 'bg-red-100 text-red-600'}`}>
+            {error}
+          </div>
         </div>
       </div>
     );
@@ -199,21 +202,20 @@ export default function ProgressPage() {
   const aiTaskProgress = calculateAITaskProgress();
   const collaboratorProgress = calculateCollaboratorAIProgress();
   const dailyProgress = calculateDailyProgress();
-
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
-        <FaBrain className={`w-8 h-8 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'}`} />
-        <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-          Progreso AI: {project?.name}
-        </h1>
-      </div>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
+      <div className="p-6 md:p-8 max-w-7xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <FaBrain className={`w-8 h-8 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'}`} />
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            Progreso AI: {project?.name}
+          </h1>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Progreso General AI */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">        {/* Progreso General AI */}
+        <div className={`rounded-lg p-6 shadow-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
-            <FaRobot className={`w-6 h-6 ${theme === 'dark' ? 'text-green-400' : 'text-green-500'}`} />
+            <FaRobot className={`w-6 h-6 ${theme === 'dark' ? 'text-[#26D07C]' : 'text-[#26D07C]'}`} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Progreso AI
             </h2>
@@ -221,14 +223,14 @@ export default function ProgressPage() {
           
           <div className="flex justify-center items-center h-48">
             <div className="relative w-32 h-32">
-              <div className={`absolute inset-0 border-8 rounded-full ${theme === 'dark' ? 'border-zinc-700' : 'border-gray-100'}`}></div>
+              <div className={`absolute inset-0 border-8 rounded-full ${theme === 'dark' ? 'border-gray-700' : 'border-gray-100'}`}></div>
               <div
-                className={`absolute inset-0 border-8 rounded-full transition-all duration-1000 ${theme === 'dark' ? 'border-green-400' : 'border-green-500'}`}
+                className={`absolute inset-0 border-8 rounded-full transition-all duration-1000 border-[#26D07C]`}
                 style={{
-                  background: `conic-gradient(${theme === 'dark' ? '#4ade80' : '#22c55e'} ${(projectProgress?.progressPercentage || 0) * 3.6}deg, ${theme === 'dark' ? '#3f3f46' : '#f3f4f6'} 0deg)`
+                  background: `conic-gradient(#26D07C ${(projectProgress?.progressPercentage || 0) * 3.6}deg, ${theme === 'dark' ? '#374151' : '#f3f4f6'} 0deg)`
                 }}
               ></div>
-              <div className="absolute inset-4 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center">
+              <div className={`absolute inset-4 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
                 <span className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {projectProgress?.progressPercentage || 0}%
                 </span>
@@ -244,16 +246,15 @@ export default function ProgressPage() {
         </div>
 
         {/* Estadísticas de Tareas AI */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm`}>
+        <div className={`rounded-lg p-6 shadow-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
             <FaTasks className={`w-6 h-6 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Tareas AI
             </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-50'} flex items-center gap-3`}>
-              <FaCheckCircle className={`w-5 h-5 ${theme === 'dark' ? 'text-green-400' : 'text-green-500'}`} />
+          </div>          <div className="grid grid-cols-2 gap-4">
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
+              <FaCheckCircle className="w-5 h-5 text-[#26D07C]" />
               <div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                   Completadas
@@ -263,7 +264,7 @@ export default function ProgressPage() {
                 </p>
               </div>
             </div>
-            <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-50'} flex items-center gap-3`}>
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <FaClock className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`} />
               <div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -274,7 +275,7 @@ export default function ProgressPage() {
                 </p>
               </div>
             </div>
-            <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-50'} flex items-center gap-3`}>
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <FaExclamationTriangle className={`w-5 h-5 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-500'}`} />
               <div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -285,7 +286,7 @@ export default function ProgressPage() {
                 </p>
               </div>
             </div>
-            <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-50'} flex items-center gap-3`}>
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
               <FaCode className={`w-5 h-5 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'}`} />
               <div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -297,10 +298,8 @@ export default function ProgressPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Progreso por Colaborador AI */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm`}>
+        </div>        {/* Progreso por Colaborador AI */}
+        <div className={`rounded-lg p-6 shadow-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
             <FaUser className={`w-6 h-6 ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-500'}`} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -322,7 +321,7 @@ export default function ProgressPage() {
                       {collab.tasksCompleted}/{collab.tasksAssigned}
                     </span>
                   </div>
-                  <div className={`w-full h-2 rounded-full ${theme === 'dark' ? 'bg-zinc-700' : 'bg-gray-100'}`}>
+                  <div className={`w-full h-2 rounded-full ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <div
                       className={`h-2 rounded-full transition-all duration-500 ${theme === 'dark' ? 'bg-indigo-400' : 'bg-indigo-500'}`}
                       style={{ width: `${collab.completionRate}%` }}
@@ -347,10 +346,8 @@ export default function ProgressPage() {
               </p>
             )}
           </div>
-        </div>
-
-        {/* Progreso Diario */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm md:col-span-2 lg:col-span-1`}>
+        </div>        {/* Progreso Diario */}
+        <div className={`rounded-lg p-6 shadow-sm md:col-span-2 lg:col-span-1 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
             <FaCalendarAlt className={`w-6 h-6 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-500'}`} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -368,7 +365,7 @@ export default function ProgressPage() {
                     {day.tasksCompleted}/{day.tasksTotal} ({day.completionRate}%)
                   </span>
                 </div>
-                <div className={`w-full h-1.5 rounded-full ${theme === 'dark' ? 'bg-zinc-700' : 'bg-gray-100'}`}>
+                <div className={`w-full h-1.5 rounded-full ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
                   <div
                     className={`h-1.5 rounded-full transition-all duration-500 ${theme === 'dark' ? 'bg-orange-400' : 'bg-orange-500'}`}
                     style={{ width: `${day.completionRate}%` }}
@@ -385,7 +382,7 @@ export default function ProgressPage() {
         </div>
 
         {/* Información del Proyecto AI */}
-        <div className={`rounded-lg p-6 ${theme === 'dark' ? 'bg-zinc-800' : 'bg-white'} shadow-sm md:col-span-2`}>
+        <div className={`rounded-lg p-6 shadow-sm md:col-span-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-6">
             <FaChartLine className={`w-6 h-6 ${theme === 'dark' ? 'text-cyan-400' : 'text-cyan-500'}`} />
             <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -446,10 +443,10 @@ export default function ProgressPage() {
                   </p>
                 </div>
               )}
-            </div>
-          </div>
+            </div>          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

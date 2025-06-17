@@ -349,7 +349,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
     <div className={`min-h-screen p-6 ${theme === 'dark' ? 'bg-[#18181b]' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 mt-12">
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-3 rounded-xl">
               <FaBrain className="text-white w-8 h-8" />
