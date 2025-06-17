@@ -451,7 +451,6 @@ export class AiTasksService {
 
     return bestMatch;
   }
-
   private findBestAssigneeWithLimits(
     projectUsers: any[], 
     requiredSkillLevel: string, 
@@ -465,18 +464,41 @@ export class AiTasksService {
       'Avanzado': 3
     };
 
+    // Define daily task limits based on skill level
+    const getDailyLimitForUser = (userSkillLevel: string): number => {
+      switch (userSkillLevel) {
+        case 'Avanzado': return 1;     // 1 tarea diaria para avanzados
+        case 'Intermedio': return 2;   // 2 tareas diarias para intermedios
+        case 'Principiante': return 3; // 3 tareas diarias para principiantes
+        default: return 2; // Default para usuarios sin evaluación
+      }
+    };
+
     let bestMatch = null;
     let bestScore = -1;
 
     for (const projectUser of projectUsers) {
       const user = projectUser.user;
       
-      // Skip if user has reached daily limit
+      // Determine user's skill level from evaluations
+      let userSkillLevel = 'Intermedio'; // Default level
+      if (user.evaluations && user.evaluations.length > 0) {
+        // Use the highest skill level from evaluations
+        const skillLevels = user.evaluations.map(e => e.level);
+        if (skillLevels.includes('Avanzado')) userSkillLevel = 'Avanzado';
+        else if (skillLevels.includes('Intermedio')) userSkillLevel = 'Intermedio';
+        else userSkillLevel = 'Principiante';
+      }
+      
+      // Get daily limit based on user's skill level
+      const userDailyLimit = getDailyLimitForUser(userSkillLevel);
+      
+      // Skip if user has reached their personal daily limit
       const currentAssignments = currentDayAssignments.get(user.id) || 0;
-      if (currentAssignments >= maxTasksPerUser) {
-        console.log(`⏭️ Usuario ${user.name} ya tiene ${currentAssignments} tareas asignadas (límite: ${maxTasksPerUser})`);
+      if (currentAssignments >= userDailyLimit) {
+        console.log(`⏭️ Usuario ${user.name} (${userSkillLevel}) ya tiene ${currentAssignments} tareas asignadas (límite personal: ${userDailyLimit})`);
         continue;
-      }      let score = 0;
+      }let score = 0;
       let hasRelevantEvaluation = false;
 
       // Base score for being a collaborator (ready to work)
@@ -509,12 +531,10 @@ export class AiTasksService {
         // No evaluations - assign basic score but lower priority
         const requiredSkillScore = skillLevelScore[requiredSkillLevel] || 1;
         score += Math.max(1, 4 - requiredSkillScore); // Lower score for higher difficulty tasks
-      }
+      }      // Bonus for having fewer current assignments (load balancing with personal limits)
+      score += (userDailyLimit - currentAssignments) * 2;
 
-      // Bonus for having fewer current assignments (load balancing)
-      score += (maxTasksPerUser - currentAssignments) * 2;
-
-      console.log(`👤 Usuario ${user.name}: Score ${score}, Evaluaciones: ${user.evaluations?.length || 0}, Asignaciones actuales: ${currentAssignments}`);
+      console.log(`👤 Usuario ${user.name} (${userSkillLevel}): Score ${score}, Evaluaciones: ${user.evaluations?.length || 0}, Asignaciones actuales: ${currentAssignments}/${userDailyLimit}`);
 
       if (score > bestScore) {
         bestScore = score;
@@ -523,7 +543,10 @@ export class AiTasksService {
     }
 
     if (bestMatch) {
-      console.log(`🎯 Mejor asignado: ${bestMatch.user.name} (Score: ${bestScore})`);
+      const userSkillLevel = bestMatch.user.evaluations?.length > 0 
+        ? bestMatch.user.evaluations.find(e => ['Avanzado', 'Intermedio', 'Principiante'].includes(e.level))?.level || 'Intermedio'
+        : 'Intermedio';
+      console.log(`🎯 Mejor asignado: ${bestMatch.user.name} (${userSkillLevel}) - Score: ${bestScore}`);
     }
 
     return bestMatch;
@@ -759,17 +782,15 @@ export class AiTasksService {
       return acc;
     }, {} as Record<number, any[]>);
 
-    let totalAssigned = 0;
-
-    // Process each day starting from current day
+    let totalAssigned = 0;    // Process each day starting from current day
     for (const [day, dayTasks] of Object.entries(tasksByDay).sort(([a], [b]) => parseInt(a) - parseInt(b))) {
       const dayNumber = parseInt(day);
       console.log(`🔄 Asignando tareas del día ${day}...`);
       
-      // For today, ensure max 1 task per user
-      const maxTasksPerUser = dayNumber === currentDay ? 1 : 2; // Today: 1 task, future days: up to 2 tasks
+      // Use skill-based limits: Avanzado=1, Intermedio=2, Principiante=3 tasks per day
+      const maxTasksPerUser = 3; // This is now handled inside findBestAssigneeWithLimits per user skill level
         for (const task of dayTasks as any[]) {
-        // Find best assignee based on skill level, evaluations, and daily assignment limits
+        // Find best assignee based on skill level, evaluations, and personal daily assignment limits
         const assignee = this.findBestAssigneeWithLimits(
           allProjectUsers,
           task.skillLevel, 
@@ -819,10 +840,8 @@ export class AiTasksService {
     }
 
     // Update project progress after assignments
-    await this.updateProjectProgress(projectId);
-
-    return {
-      message: `Se han asignado ${totalAssigned} tareas automáticamente considerando el nivel de cada usuario y límites diarios`,
+    await this.updateProjectProgress(projectId);    return {
+      message: `Se han asignado ${totalAssigned} tareas automáticamente considerando el nivel de cada usuario y límites personalizados diarios (Avanzado: 1, Intermedio: 2, Principiante: 3)`,
       assignedTasks: totalAssigned,
       assignments: assignments
     };

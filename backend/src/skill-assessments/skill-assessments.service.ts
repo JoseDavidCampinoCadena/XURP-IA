@@ -296,7 +296,6 @@ export class SkillAssessmentsService {
 
     return { message: 'Assessment reset successfully' };
   }
-
   async reassignTasks(projectId: number) {
     // Get all assessments for the project
     const assessments = await this.prisma.skillAssessment.findMany({
@@ -308,11 +307,11 @@ export class SkillAssessmentsService {
       throw new BadRequestException('No hay evaluaciones completadas para reasignar tareas');
     }
 
-    // Get all unassigned AI tasks
-    const unassignedTasks = await this.prisma.aITask.findMany({
+    // Get ALL AI tasks (both assigned and unassigned) for redistribution
+    const allTasks = await this.prisma.aITask.findMany({
       where: {
         projectId,
-        assigneeId: null
+        status: 'PENDING' // Only reassign pending tasks, not in-progress or completed
       },
       orderBy: [
         { dayNumber: 'asc' },
@@ -320,44 +319,122 @@ export class SkillAssessmentsService {
       ]
     });
 
-    if (unassignedTasks.length === 0) {
-      return { assignedTasks: 0, message: 'No hay tareas sin asignar' };
+    if (allTasks.length === 0) {
+      return { assignedTasks: 0, message: 'No hay tareas pendientes para reasignar' };
     }
 
-    // Group users by skill level
+    console.log(`🔄 Reasignando ${allTasks.length} tareas basándose en ${assessments.length} evaluaciones completadas`);
+
+    // First, clear all existing assignments for pending tasks
+    await this.prisma.aITask.updateMany({
+      where: {
+        projectId,
+        status: 'PENDING'
+      },
+      data: {
+        assigneeId: null
+      }
+    });
+
+    console.log(`🧹 Limpiadas todas las asignaciones previas de tareas pendientes`);
+
+    // Group users by skill level and get their daily limits
     const usersBySkill = assessments.reduce((acc, assessment) => {
       const skillLevel = assessment.skillLevel;
       if (!acc[skillLevel]) {
         acc[skillLevel] = [];
       }
-      acc[skillLevel].push(assessment.user);
+      acc[skillLevel].push({
+        ...assessment.user,
+        skillLevel: assessment.skillLevel,
+        dailyLimit: this.getDailyLimitForUser(assessment.skillLevel)
+      });
       return acc;
     }, {} as Record<string, any[]>);
 
+    // Track assignments per user per day
+    const userDailyAssignments = new Map<string, number>(); // key: "userId-dayNumber"
+
     let assignedCount = 0;
 
-    // Assign tasks based on skill level matching
-    for (const task of unassignedTasks) {
-      const taskSkillLevel = task.skillLevel;
-      const availableUsers = usersBySkill[taskSkillLevel] || [];
+    // Group tasks by day for proper distribution
+    const tasksByDay = allTasks.reduce((acc, task) => {
+      if (!acc[task.dayNumber]) {
+        acc[task.dayNumber] = [];
+      }
+      acc[task.dayNumber].push(task);
+      return acc;
+    }, {} as Record<number, any[]>);
 
-      if (availableUsers.length > 0) {
-        // Simple round-robin assignment
-        const userIndex = assignedCount % availableUsers.length;
-        const assignedUser = availableUsers[userIndex];
+    // Process each day starting from day 1
+    for (const [day, dayTasks] of Object.entries(tasksByDay).sort(([a], [b]) => parseInt(a) - parseInt(b))) {
+      const dayNumber = parseInt(day);
+      console.log(`📅 Procesando día ${day} con ${dayTasks.length} tareas`);
 
-        await this.prisma.aITask.update({
-          where: { id: task.id },
-          data: { assigneeId: assignedUser.id }
-        });
+      // Assign tasks for this day
+      for (const task of dayTasks) {
+        const taskSkillLevel = task.skillLevel;
+        const availableUsers = usersBySkill[taskSkillLevel] || [];
 
-        assignedCount++;
+        if (availableUsers.length === 0) {
+          console.log(`⚠️ No hay usuarios con nivel ${taskSkillLevel} para la tarea "${task.title}"`);
+          continue;
+        }
+
+        // Find user with least assignments for this day and skill level
+        let bestUser = null;
+        let minAssignments = Infinity;
+
+        for (const user of availableUsers) {
+          const userDayKey = `${user.id}-${dayNumber}`;
+          const currentAssignments = userDailyAssignments.get(userDayKey) || 0;
+
+          if (currentAssignments < user.dailyLimit && currentAssignments < minAssignments) {
+            minAssignments = currentAssignments;
+            bestUser = user;
+          }
+        }
+
+        if (bestUser) {
+          // Assign task to best user
+          await this.prisma.aITask.update({
+            where: { id: task.id },
+            data: { assigneeId: bestUser.id }
+          });
+
+          // Update assignment count
+          const userDayKey = `${bestUser.id}-${dayNumber}`;
+          const currentCount = userDailyAssignments.get(userDayKey) || 0;
+          userDailyAssignments.set(userDayKey, currentCount + 1);
+
+          assignedCount++;
+          console.log(`✅ Tarea "${task.title}" (${task.skillLevel}) asignada a ${bestUser.name} (${currentCount + 1}/${bestUser.dailyLimit} para el día ${day})`);
+        } else {
+          console.log(`⚠️ No se pudo asignar la tarea "${task.title}" - todos los usuarios ${taskSkillLevel} han alcanzado su límite diario`);
+        }
       }
     }
 
     return {
       assignedTasks: assignedCount,
-      message: `Se asignaron ${assignedCount} tareas basándose en las evaluaciones de habilidad`
+      message: `Se reasignaron ${assignedCount} tareas basándose en las evaluaciones de habilidad y límites personalizados`,
+      details: {
+        totalTasks: allTasks.length,
+        assessments: assessments.length,
+        usersBySkill: Object.keys(usersBySkill).reduce((acc, skill) => {
+          acc[skill] = usersBySkill[skill].length;
+          return acc;
+        }, {} as Record<string, number>)
+      }
     };
+  }
+
+  private getDailyLimitForUser(skillLevel: string): number {
+    switch (skillLevel) {
+      case 'Avanzado': return 1;     // 1 tarea diaria para avanzados
+      case 'Intermedio': return 2;   // 2 tareas diarias para intermedios  
+      case 'Principiante': return 3; // 3 tareas diarias para principiantes
+      default: return 2; // Default para casos edge
+    }
   }
 }
