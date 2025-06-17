@@ -464,8 +464,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                 </h3>
                 <p className={`mb-4 ${theme === 'dark' ? 'text-blue-200' : 'text-blue-700'}`}>
                   Nuestro sistema asigna tareas automáticamente considerando múltiples factores para optimizar el rendimiento del equipo.
-                </p>
-                <div className="grid md:grid-cols-2 gap-4">
+                </p>                <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <h4 className={`font-semibold flex items-center gap-2 ${
                       theme === 'dark' ? 'text-blue-100' : 'text-blue-800'
@@ -476,10 +475,10 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                     <ul className={`text-sm space-y-1 ml-6 ${
                       theme === 'dark' ? 'text-blue-200' : 'text-blue-700'
                     }`}>
-                      <li>• Nivel de habilidad del usuario</li>
-                      <li>• Evaluaciones de competencias</li>
-                      <li>• Experiencia en tecnologías</li>
-                      <li>• Carga de trabajo actual</li>
+                      <li>• Evaluaciones de competencias completadas</li>
+                      <li>• Matching exacto de nivel de habilidad</li>
+                      <li>• Experiencia en tecnologías específicas</li>
+                      <li>• Carga de trabajo actual y balance</li>
                     </ul>
                   </div>
                   <div className="space-y-2">
@@ -488,15 +487,58 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                     }`}>
                       <FaClock className="w-4 h-4" />
                       Límites Inteligentes:
-                    </h4>
-                    <ul className={`text-sm space-y-1 ml-6 ${
+                    </h4>                    <ul className={`text-sm space-y-1 ml-6 ${
                       theme === 'dark' ? 'text-blue-200' : 'text-blue-700'
                     }`}>
-                      <li>• Máximo 1 tarea por usuario/día</li>
-                      <li>• Priorización por día de proyecto</li>
-                      <li>• Balance automático de carga</li>
-                      <li>• Asignación progresiva por dificultad</li>
+                      <li>• Balance personalizado por nivel de habilidad</li>
+                      <li>• Límites diarios adaptativos (1-3 tareas)</li>
+                      <li>• Balance automático optimizado</li>
+                      <li>• Distribución progresiva inteligente</li>
                     </ul>
+                  </div>
+                </div>                <div className={`mt-4 p-4 border rounded-lg ${
+                  theme === 'dark' 
+                    ? 'bg-blue-500/20 border-blue-500/30' 
+                    : 'bg-blue-50 border-blue-200'
+                }`}>
+                  <div className={`text-sm ${
+                    theme === 'dark' ? 'text-blue-200' : 'text-blue-800'
+                  }`}>
+                    <h4 className="font-semibold mb-2 flex items-center gap-2">
+                      ⚖️ Nuevo Sistema de Balance de Carga
+                    </h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div className="space-y-1">
+                        <div className="font-semibold text-green-400">🟢 Principiante</div>
+                        <div className="text-xs">3 tareas/día</div>
+                        <div className="text-xs opacity-75">Más práctica</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="font-semibold text-yellow-400">🟡 Intermedio</div>
+                        <div className="text-xs">2 tareas/día</div>
+                        <div className="text-xs opacity-75">Balance óptimo</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="font-semibold text-red-400">🔴 Avanzado</div>
+                        <div className="text-xs">1 tarea/día</div>
+                        <div className="text-xs opacity-75">Alta complejidad</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={`mt-4 p-4 border rounded-lg ${
+                  theme === 'dark' 
+                    ? 'bg-yellow-500/20 border-yellow-500/30' 
+                    : 'bg-yellow-50 border-yellow-200'
+                }`}>
+                  <div className={`flex items-start gap-2 text-sm ${
+                    theme === 'dark' ? 'text-yellow-200' : 'text-yellow-800'
+                  }`}>
+                    <FaExclamationTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong>Importante:</strong> Para una asignación óptima, asegúrate de que los colaboradores hayan completado sus evaluaciones de habilidades. 
+                      <br />Usuarios sin evaluaciones recibirán tareas básicas por defecto.
+                    </div>
                   </div>
                 </div>
                 <div className={`mt-4 p-4 border rounded-lg ${
@@ -698,43 +740,85 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                     }`}>
                       <FaTasks className="text-[#26D07C]" />
                       Tareas ({filteredTasks.length})
-                    </h3>
-                      {aiTasks.some(task => !task.assignee) && (
-                      <div className="relative group">
-                        <button
-                          onClick={assignDailyTasks}
-                          disabled={isAssigning}
-                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 disabled:opacity-50 text-sm"
-                        >
-                          {isAssigning ? (
-                            <>
-                              <FaSpinner className="animate-spin w-4 h-4" />
-                              Asignando...
-                            </>
-                          ) : (
-                            <>
-                              <FaUser className="w-4 h-4" />
-                              Asignación Inteligente
-                            </>
-                          )}
-                        </button>
-                        
-                        {/* Tooltip */}
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                          <div className={`text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg border ${
-                            theme === 'dark' 
-                              ? 'bg-gray-900 text-white border-gray-600' 
-                              : 'bg-white text-gray-900 border-gray-200'
-                          }`}>
-                            <div className="text-center">
-                              <p className="font-semibold mb-1">🎯 Asignación Inteligente</p>
-                              <p>✓ Considera nivel de habilidades</p>
-                              <p>✓ Máximo 1 tarea por día</p>
-                              <p>✓ Balance de carga</p>
+                    </h3>                    {aiTasks.some(task => !task.assignee) && (
+                      <div className="flex gap-2">
+                        <div className="relative group">
+                          <button
+                            onClick={assignDailyTasks}
+                            disabled={isAssigning}
+                            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 disabled:opacity-50 text-sm"
+                          >
+                            {isAssigning ? (
+                              <>
+                                <FaSpinner className="animate-spin w-4 h-4" />
+                                Asignando...
+                              </>
+                            ) : (
+                              <>
+                                <FaUser className="w-4 h-4" />
+                                Asignación Inteligente
+                              </>
+                            )}
+                          </button>
+                          
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                            <div className={`text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg border ${
+                              theme === 'dark' 
+                                ? 'bg-gray-900 text-white border-gray-600' 
+                                : 'bg-white text-gray-900 border-gray-200'
+                            }`}>                              <div className="text-center">
+                                <p className="font-semibold mb-1">🎯 Asignación Inteligente</p>
+                                <p>✓ Considera evaluaciones de habilidades</p>
+                                <p>✓ Balance de carga personalizado:</p>
+                                <p className="text-xs">• Avanzado: 1 tarea/día</p>
+                                <p className="text-xs">• Intermedio: 2 tareas/día</p>
+                                <p className="text-xs">• Principiante: 3 tareas/día</p>
+                                <p>✓ Prioriza colaboradores calificados</p>
+                              </div>
+                              <div className={`absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${
+                                theme === 'dark' ? 'border-t-gray-900' : 'border-t-white'
+                              }`}></div>
                             </div>
-                            <div className={`absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${
-                              theme === 'dark' ? 'border-t-gray-900' : 'border-t-white'
-                            }`}></div>
+                          </div>
+                        </div>
+
+                        <div className="relative group">
+                          <button
+                            onClick={reassignTasksBasedOnSkills}
+                            disabled={isAssigning}
+                            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 disabled:opacity-50 text-sm"
+                          >
+                            {isAssigning ? (
+                              <>
+                                <FaSpinner className="animate-spin w-4 h-4" />
+                                Reasignando...
+                              </>
+                            ) : (
+                              <>
+                                <FaUserGraduate className="w-4 h-4" />
+                                Por Evaluaciones
+                              </>
+                            )}
+                          </button>
+                          
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                            <div className={`text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg border ${
+                              theme === 'dark' 
+                                ? 'bg-gray-900 text-white border-gray-600' 
+                                : 'bg-white text-gray-900 border-gray-200'
+                            }`}>
+                              <div className="text-center">
+                                <p className="font-semibold mb-1">🎓 Asignación por Evaluaciones</p>
+                                <p>✓ Solo usuarios con test completado</p>
+                                <p>✓ Matching exacto de nivel de habilidad</p>
+                                <p>✓ Requiere evaluaciones completadas</p>
+                              </div>
+                              <div className={`absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent ${
+                                theme === 'dark' ? 'border-t-gray-900' : 'border-t-white'
+                              }`}></div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -791,11 +875,11 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                                 <div className="flex items-center gap-2">
                                   <FaClock />
                                   <span>Estimado: {task.estimatedHours}h</span>
-                                </div>
-                                {task.assignee ? (
+                                </div>                                {task.assignee ? (
                                   <div className="flex items-center gap-2">
                                     <FaUser />
                                     <span>Asignado: {task.assignee.name}</span>
+                                    {/* TODO: Add evaluation status indicator when available in task data */}
                                   </div>
                                 ) : (
                                   <div className="flex items-center gap-2 text-yellow-500">
@@ -929,9 +1013,7 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                       <FaUserGraduate className="text-[#26D07C]" />
                       Evaluaciones de Colaboradores
                     </h3>
-                  </div>
-
-                  {assessments.length === 0 ? (
+                  </div>                  {assessments.length === 0 ? (
                     <div className="text-center py-12">
                       <FaUserGraduate className={`w-12 h-12 mx-auto mb-4 ${
                         theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
@@ -944,15 +1026,37 @@ Las tareas aparecerán en la lista personal de cada colaborador cuando las inici
                       }`}>
                         Los colaboradores pueden completar una evaluación de habilidades cuando se unan al proyecto
                       </p>
-                      <div className={`border rounded-xl p-4 ${
+                      
+                      {/* Warning about task assignment */}
+                      <div className={`mt-6 p-4 border rounded-lg ${
+                        theme === 'dark' 
+                          ? 'bg-yellow-500/20 border-yellow-500/30' 
+                          : 'bg-yellow-50 border-yellow-200'
+                      }`}>
+                        <div className={`flex items-start gap-3 text-sm ${
+                          theme === 'dark' ? 'text-yellow-200' : 'text-yellow-800'
+                        }`}>
+                          <FaExclamationTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                          <div className="text-left">
+                            <p className="font-semibold mb-2">⚠️ Impacto en la Asignación de Tareas</p>
+                            <ul className="space-y-1">
+                              <li>• Sin evaluaciones, las tareas se asignan de forma básica</li>
+                              <li>• Los colaboradores sin test reciben menor prioridad</li>
+                              <li>• Tareas avanzadas pueden asignarse a usuarios principiantes</li>
+                              <li>• Recomendamos que todos completen sus evaluaciones</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className={`mt-4 border rounded-xl p-4 ${
                         theme === 'dark' 
                           ? 'bg-blue-500/20 border-blue-500/50' 
                           : 'bg-blue-50 border-blue-200'
                       }`}>
                         <p className={`text-sm ${
-                          theme === 'dark' ? 'text-blue-200' : 'text-blue-800'
-                        }`}>
-                          💡 <strong>Consejo:</strong> Las evaluaciones ayudan a asignar tareas automáticamente basadas en el nivel de habilidad de cada colaborador
+                          theme === 'dark' ? 'text-blue-200' : 'text-blue-800'                        }`}>
+                          💡 Los colaboradores pueden acceder a su evaluación desde la página de skill-assessment del proyecto
                         </p>
                       </div>
                     </div>

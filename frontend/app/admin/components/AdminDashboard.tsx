@@ -41,7 +41,7 @@ export default function AdminDashboard({ project: providedProject }: AdminDashbo
     return (
       <div className="p-4 md:p-8">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <div className={`p-6 md:p-8 rounded-xl border max-w-md mx-auto ${theme === 'dark' ? 'bg-[#18181b] border-black' : 'bg-gray-100 border-gray-200'}`}>
+          <div className={`p-6 md:p-8 rounded-xl border max-w-md mx-auto ${theme === 'dark' ? 'bg-black border-white' : 'bg-gray-100 border-gray-200'}`}>
             <FaProjectDiagram className={`text-4xl md:text-6xl mx-auto mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-400'}`} />
             <h2 className={`text-xl md:text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
               No hay proyectos disponibles
